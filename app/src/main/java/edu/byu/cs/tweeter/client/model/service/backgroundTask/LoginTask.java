@@ -4,31 +4,26 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
+import java.io.IOException;
+
 import edu.byu.cs.tweeter.client.model.net.ServerFacade;
 import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
 import edu.byu.cs.tweeter.model.net.request.LoginRequest;
 import edu.byu.cs.tweeter.model.net.response.LoginResponse;
+import edu.byu.cs.tweeter.util.Pair;
 
 /**
  * Background task that logs in a user (i.e., starts a session).
  */
-public class LoginTask extends BackgroundTask {
+public class LoginTask extends AuthenticateTask {
 
     private static final String LOG_TAG = "LoginTask";
 
     public static final String USER_KEY = "user";
     public static final String AUTH_TOKEN_KEY = "auth-token";
-
-    /**
-     * The user's username (or "alias" or "handle"). E.g., "@susan".
-     */
-    private String username;
-    /**
-     * The user's password.
-     */
-    private String password;
 
     /**
      * The logged-in user returned by the server.
@@ -43,34 +38,32 @@ public class LoginTask extends BackgroundTask {
     private ServerFacade serverFacade;
 
     public LoginTask(UserService userService, String username, String password, Handler messageHandler) {
-        super(messageHandler);
-
-        this.username = username;
-        this.password = password;
+        super(messageHandler, username, password);
     }
+
+//    @Override
+//    protected void runTask() {
+//        try {
+//            LoginRequest request = new LoginRequest(username, password);
+//            LoginResponse response = getServerFacade().login(request, UserService.URL_PATH);
+//
+//            if (response.isSuccess()) {
+//                this.user = response.getUser();
+//                this.authToken = response.getAuthToken();
+//                sendSuccessMessage();
+//            } else {
+//                sendFailedMessage(response.getMessage());
+//            }
+//        } catch (Exception ex) {
+//            Log.e(LOG_TAG, ex.getMessage(), ex);
+//            sendExceptionMessage(ex);
+//        }
+//    }
 
     @Override
-    protected void runTask() {
-        try {
-            LoginRequest request = new LoginRequest(username, password);
-            LoginResponse response = getServerFacade().login(request, UserService.URL_PATH);
-
-            if (response.isSuccess()) {
-                this.user = response.getUser();
-                this.authToken = response.getAuthToken();
-                sendSuccessMessage();
-            } else {
-                sendFailedMessage(response.getMessage());
-            }
-        } catch (Exception ex) {
-            Log.e(LOG_TAG, ex.getMessage(), ex);
-            sendExceptionMessage(ex);
-        }
-    }
-
-    protected void loadSuccessBundle(Bundle msgBundle) {
-        msgBundle.putSerializable(USER_KEY, this.user);
-        msgBundle.putSerializable(AUTH_TOKEN_KEY, this.authToken);
+    protected LoginResponse runAuthenticationTask() throws IOException, TweeterRemoteException {
+        LoginRequest request = new LoginRequest(username, password);
+        return getServerFacade().login(request, UserService.URL_PATH);
     }
 
     /**

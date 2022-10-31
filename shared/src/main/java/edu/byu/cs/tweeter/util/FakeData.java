@@ -52,7 +52,7 @@ public class FakeData {
     /**
      * Generated auth token.
      */
-    private final AuthToken authToken = new AuthToken();
+    private final AuthToken authToken = new AuthToken("specialtoken");
 
     /**
      * List of generated users.
