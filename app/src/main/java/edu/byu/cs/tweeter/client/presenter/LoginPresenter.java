@@ -4,6 +4,7 @@ import android.util.Log;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.UserService;
+import edu.byu.cs.tweeter.client.model.service.observer.AuthenticateObserver;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.LoginRequest;
@@ -11,11 +12,16 @@ import edu.byu.cs.tweeter.model.net.request.LoginRequest;
 /**
  * The presenter for the login functionality of the application.
  */
-public class LoginPresenter implements UserService.LoginObserver {
+public class LoginPresenter implements AuthenticateObserver {
 
     private static final String LOG_TAG = "LoginPresenter";
 
     private final View view;
+
+    @Override
+    public void handleAuthenticationSucceeded(User user, AuthToken authToken) {
+        view.loginSuccessful(user, authToken);
+    }
 
     /**
      * The interface by which this presenter communicates with it's view.
@@ -50,22 +56,6 @@ public class LoginPresenter implements UserService.LoginObserver {
     }
 
     /**
-     * Invoked when the login request completes if the login was successful. Notifies the view of
-     * the successful login.
-     *
-     * @param user the logged-in user.
-     * @param authToken the session auth token.
-     */
-    @Override
-    public void handleSuccess(User user, AuthToken authToken) {
-        // Cache user session information
-        Cache.getInstance().setCurrUser(user);
-        Cache.getInstance().setCurrUserAuthToken(authToken);
-
-        view.loginSuccessful(user, authToken);
-    }
-
-    /**
      * Invoked when the login request completes if the login request was unsuccessful. Notifies the
      * view of the unsuccessful login.
      *
@@ -75,19 +65,6 @@ public class LoginPresenter implements UserService.LoginObserver {
     public void handleFailure(String message) {
         String errorMessage = "Failed to login: " + message;
         Log.e(LOG_TAG, errorMessage);
-        view.loginUnsuccessful(errorMessage);
-    }
-
-    /**
-     * A callback indicating that an exception occurred in an asynchronous method this class is
-     * observing.
-     *
-     * @param exception the exception.
-     */
-    @Override
-    public void handleException(Exception exception) {
-        String errorMessage = "Failed to login because of exception: " + exception.getMessage();
-        Log.e(LOG_TAG, errorMessage, exception);
         view.loginUnsuccessful(errorMessage);
     }
 }

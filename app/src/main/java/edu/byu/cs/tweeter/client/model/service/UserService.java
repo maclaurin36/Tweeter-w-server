@@ -2,9 +2,8 @@ package edu.byu.cs.tweeter.client.model.service;
 
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.BackgroundTaskUtils;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.LoginTask;
-import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.LoginTaskHandler;
-import edu.byu.cs.tweeter.model.domain.AuthToken;
-import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.authenticated.LoginHandler;
+import edu.byu.cs.tweeter.client.model.service.observer.AuthenticateObserver;
 
 /**
  * Contains the business logic to support the login operation.
@@ -12,16 +11,6 @@ import edu.byu.cs.tweeter.model.domain.User;
 public class UserService {
 
     public static final String URL_PATH = "/login";
-
-    /**
-     * An observer interface to be implemented by observers who want to be notified when
-     * asynchronous operations complete.
-     */
-    public interface LoginObserver {
-        void handleSuccess(User user, AuthToken authToken);
-        void handleFailure(String message);
-        void handleException(Exception exception);
-    }
 
     /**
      * Creates an instance.
@@ -36,7 +25,7 @@ public class UserService {
      * @param username the user's name.
      * @param password the user's password.
      */
-    public void login(String username, String password, LoginObserver observer) {
+    public void login(String username, String password, AuthenticateObserver observer) {
         LoginTask loginTask = getLoginTask(username, password, observer);
         BackgroundTaskUtils.runTask(loginTask);
     }
@@ -48,7 +37,7 @@ public class UserService {
      *
      * @return the instance.
      */
-    LoginTask getLoginTask(String username, String password, LoginObserver observer) {
-        return new LoginTask(this, username, password, new LoginTaskHandler(observer));
+    LoginTask getLoginTask(String username, String password, AuthenticateObserver observer) {
+        return new LoginTask(this, username, password, new LoginHandler(observer));
     }
 }
