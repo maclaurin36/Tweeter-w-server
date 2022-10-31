@@ -5,13 +5,14 @@ import android.util.Log;
 import java.util.List;
 
 import edu.byu.cs.tweeter.client.model.service.FollowService;
+import edu.byu.cs.tweeter.client.model.service.observer.PaginationObserver;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
 /**
  * The presenter for the "following" functionality of the application.
  */
-public class FollowingPresenter implements FollowService.GetFollowingObserver {
+public class FollowingPresenter implements PaginationObserver<User> {
 
     private static final String LOG_TAG = "FollowingPresenter";
     public static final int PAGE_SIZE = 10;
@@ -25,6 +26,21 @@ public class FollowingPresenter implements FollowService.GetFollowingObserver {
     private boolean isLoading = false;
 
     private FollowService followService;
+
+    @Override
+    public void handleGetListSuccess(List<User> items, Boolean hasMorePages) {
+        setLastFollowee((items.size() > 0) ? items.get(items.size() - 1) : null);
+        setHasMorePages(hasMorePages);
+
+        view.setLoading(false);
+        view.addItems(items);
+        setLoading(false);
+    }
+
+    @Override
+    public void handlePaginationFailure() {
+
+    }
 
     /**
      * The interface by which this presenter communicates with it's view.
@@ -115,22 +131,6 @@ public class FollowingPresenter implements FollowService.GetFollowingObserver {
     }
 
     /**
-     * Adds new followees retrieved asynchronously from the service to the view.
-     *
-     * @param followees the retrieved followees.
-     * @param hasMorePages whether or not there are more followees to retrieve.
-     */
-    @Override
-    public void handleSuccess(List<User> followees, boolean hasMorePages) {
-        setLastFollowee((followees.size() > 0) ? followees.get(followees.size() - 1) : null);
-        setHasMorePages(hasMorePages);
-
-        view.setLoading(false);
-        view.addItems(followees);
-        setLoading(false);
-    }
-
-    /**
      * Notifies the presenter when asynchronous retrieval of followees failed.
      *
      * @param message error message.
@@ -139,22 +139,6 @@ public class FollowingPresenter implements FollowService.GetFollowingObserver {
     public void handleFailure(String message) {
         String errorMessage = "Failed to retrieve followees: " + message;
         Log.e(LOG_TAG, errorMessage);
-
-        view.setLoading(false);
-        view.displayErrorMessage(errorMessage);
-        setLoading(false);
-    }
-
-    /**
-     * Notifies the presenter that an exception occurred in an asynchronous method this class is
-     * observing.
-     *
-     * @param exception the exception.
-     */
-    @Override
-    public void handleException(Exception exception) {
-        String errorMessage = "Failed to retrieve followees because of exception: " + exception.getMessage();
-        Log.e(LOG_TAG, errorMessage, exception);
 
         view.setLoading(false);
         view.displayErrorMessage(errorMessage);

@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * A base class for server responses.
  */
-class Response implements Serializable {
+public class Response implements Serializable {
 
     private boolean success;
     private String errorMessage;

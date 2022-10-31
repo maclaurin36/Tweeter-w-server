@@ -4,7 +4,8 @@ import java.util.List;
 
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.BackgroundTaskUtils;
 import edu.byu.cs.tweeter.client.model.service.backgroundTask.GetFollowingTask;
-import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.GetFollowingTaskHandler;
+import edu.byu.cs.tweeter.client.model.service.backgroundTask.handler.paged.GetFollowingHandler;
+import edu.byu.cs.tweeter.client.model.service.observer.PaginationObserver;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 
@@ -41,7 +42,7 @@ public class FollowService {
      * @param limit the maximum number of followees to return.
      * @param lastFollowee the last followee returned in the previous request (can be null).
      */
-    public void getFollowees(AuthToken authToken, User targetUser, int limit, User lastFollowee, GetFollowingObserver observer) {
+    public void getFollowees(AuthToken authToken, User targetUser, int limit, User lastFollowee, PaginationObserver<User> observer) {
         GetFollowingTask followingTask = getGetFollowingTask(authToken, targetUser, limit, lastFollowee, observer);
         BackgroundTaskUtils.runTask(followingTask);
     }
@@ -54,7 +55,7 @@ public class FollowService {
      * @return the instance.
      */
     // This method is public so it can be accessed by test cases
-    public GetFollowingTask getGetFollowingTask(AuthToken authToken, User targetUser, int limit, User lastFollowee, GetFollowingObserver observer) {
-        return new GetFollowingTask(this, authToken, targetUser, limit, lastFollowee, new GetFollowingTaskHandler(observer));
+    public GetFollowingTask getGetFollowingTask(AuthToken authToken, User targetUser, int limit, User lastFollowee, PaginationObserver<User> observer) {
+        return new GetFollowingTask(this, authToken, targetUser, limit, lastFollowee, new GetFollowingHandler(observer));
     }
 }
