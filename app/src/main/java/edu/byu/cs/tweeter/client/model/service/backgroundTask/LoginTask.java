@@ -37,7 +37,7 @@ public class LoginTask extends AuthenticateTask {
 
     private ServerFacade serverFacade;
 
-    public LoginTask(UserService userService, String username, String password, Handler messageHandler) {
+    public LoginTask(String username, String password, Handler messageHandler) {
         super(messageHandler, username, password);
     }
 

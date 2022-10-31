@@ -28,7 +28,7 @@ public class GetFollowingTask extends PagedUserTask<FollowingResponse> {
 
     private ServerFacade serverFacade;
 
-    public GetFollowingTask(FollowService followService, AuthToken authToken, User targetUser, int limit, User lastFollowee,
+    public GetFollowingTask(AuthToken authToken, User targetUser, int limit, User lastFollowee,
                             Handler messageHandler) {
         super(authToken, targetUser, limit, lastFollowee, messageHandler);
     }
