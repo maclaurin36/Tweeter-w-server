@@ -4,11 +4,8 @@ import android.os.Handler;
 
 import java.io.IOException;
 
-import edu.byu.cs.tweeter.model.domain.AuthToken;
-import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
-import edu.byu.cs.tweeter.model.net.response.LoginResponse;
-import edu.byu.cs.tweeter.util.Pair;
+import edu.byu.cs.tweeter.model.net.response.AuthenticateResponse;
 
 /**
  * Background task that creates a new user account and logs in the new user (i.e., starts a session).
@@ -40,7 +37,7 @@ public class RegisterTask extends AuthenticateTask {
 
     // TODO convert this and fill it in
     @Override
-    protected LoginResponse runAuthenticationTask() throws IOException, TweeterRemoteException {
+    protected AuthenticateResponse runAuthenticationTask() throws IOException, TweeterRemoteException {
         return null;
     }
 

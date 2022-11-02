@@ -2,11 +2,12 @@ package edu.byu.cs.tweeter.client.model.net;
 
 import java.io.IOException;
 
+import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
 import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.net.request.LoginRequest;
-import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
-import edu.byu.cs.tweeter.model.net.response.LoginResponse;
+import edu.byu.cs.tweeter.model.net.response.AuthenticateResponse;
+import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 
 /**
  * Acts as a Facade to the Tweeter server. All network requests to the server should go through
@@ -24,8 +25,8 @@ public class ServerFacade {
      * @param request contains all information needed to perform a login.
      * @return the login response.
      */
-    public LoginResponse login(LoginRequest request, String urlPath) throws IOException, TweeterRemoteException {
-        return clientCommunicator.doPost(urlPath, request, null, LoginResponse.class);
+    public AuthenticateResponse login(LoginRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, AuthenticateResponse.class);
     }
 
     /**
@@ -37,8 +38,8 @@ public class ServerFacade {
      *                other information required to satisfy the request.
      * @return the followees.
      */
-    public FollowingResponse getFollowees(FollowingRequest request, String urlPath)
+    public PagedResponse<User> getFollowees(FollowingRequest request, String urlPath)
             throws IOException, TweeterRemoteException {
-        return clientCommunicator.doPost(urlPath, request, null, FollowingResponse.class);
+        return clientCommunicator.doPost(urlPath, request, null, PagedResponse.class);
     }
 }

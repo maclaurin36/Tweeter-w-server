@@ -10,12 +10,12 @@ import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
 import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
-import edu.byu.cs.tweeter.model.net.response.FollowingResponse;
+import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 
 /**
  * Background task that retrieves a page of other users being followed by a specified user.
  */
-public class GetFollowingTask extends PagedUserTask<FollowingResponse> {
+public class GetFollowingTask extends PagedUserTask<PagedResponse<User>> {
 
     private static final String LOG_TAG = "GetFollowingTask";
 
@@ -27,7 +27,7 @@ public class GetFollowingTask extends PagedUserTask<FollowingResponse> {
     }
 
     @Override
-    protected FollowingResponse getListResponse() throws IOException, TweeterRemoteException {
+    protected PagedResponse<User> getListResponse() throws IOException, TweeterRemoteException {
         String targetUserAlias = targetUser == null ? null : targetUser.getAlias();
         String lastAlias = lastItem == null ? null : lastItem.getAlias();
         FollowingRequest request = new FollowingRequest(authToken, targetUserAlias, limit, lastAlias);
@@ -35,8 +35,8 @@ public class GetFollowingTask extends PagedUserTask<FollowingResponse> {
     }
 
     @Override
-    protected void setItems(FollowingResponse response) {
-        this.items = response.getFollowees();
+    protected void setItems(PagedResponse<User> response) {
+        this.items = response.getItems();
         this.hasMorePages = response.getHasMorePages();
     }
 

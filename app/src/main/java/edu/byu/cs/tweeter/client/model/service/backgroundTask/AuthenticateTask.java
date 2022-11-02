@@ -7,13 +7,10 @@ import android.util.Log;
 import java.io.IOException;
 
 import edu.byu.cs.tweeter.client.model.net.ServerFacade;
-import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
-import edu.byu.cs.tweeter.model.net.request.LoginRequest;
-import edu.byu.cs.tweeter.model.net.response.LoginResponse;
-import edu.byu.cs.tweeter.util.Pair;
+import edu.byu.cs.tweeter.model.net.response.AuthenticateResponse;
 
 public abstract class AuthenticateTask extends BackgroundTask {
 
@@ -47,7 +44,7 @@ public abstract class AuthenticateTask extends BackgroundTask {
     @Override
     protected final void runTask() {
         try {
-            LoginResponse loginResult =  runAuthenticationTask();
+            AuthenticateResponse loginResult =  runAuthenticationTask();
             if (loginResult.isSuccess()) {
                 authenticatedUser = loginResult.getUser();
                 authToken = loginResult.getAuthToken();
@@ -69,7 +66,7 @@ public abstract class AuthenticateTask extends BackgroundTask {
         // sendFailedMessage()
     }
 
-    protected abstract LoginResponse runAuthenticationTask() throws IOException, TweeterRemoteException;
+    protected abstract AuthenticateResponse runAuthenticationTask() throws IOException, TweeterRemoteException;
 
     @Override
     protected void loadSuccessBundle(Bundle msgBundle) {

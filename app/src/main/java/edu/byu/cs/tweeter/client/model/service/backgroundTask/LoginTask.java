@@ -10,7 +10,7 @@ import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
 import edu.byu.cs.tweeter.model.net.request.LoginRequest;
-import edu.byu.cs.tweeter.model.net.response.LoginResponse;
+import edu.byu.cs.tweeter.model.net.response.AuthenticateResponse;
 
 /**
  * Background task that logs in a user (i.e., starts a session).
@@ -42,7 +42,7 @@ public class LoginTask extends AuthenticateTask {
 //    protected void runTask() {
 //        try {
 //            LoginRequest request = new LoginRequest(username, password);
-//            LoginResponse response = getServerFacade().login(request, UserService.URL_PATH);
+//            AuthenticateResponse response = getServerFacade().login(request, UserService.URL_PATH);
 //
 //            if (response.isSuccess()) {
 //                this.user = response.getUser();
@@ -58,7 +58,7 @@ public class LoginTask extends AuthenticateTask {
 //    }
 
     @Override
-    protected LoginResponse runAuthenticationTask() throws IOException, TweeterRemoteException {
+    protected AuthenticateResponse runAuthenticationTask() throws IOException, TweeterRemoteException {
         LoginRequest request = new LoginRequest(username, password);
         return getServerFacade().login(request, UserService.LOGIN_URL_PATH);
     }
