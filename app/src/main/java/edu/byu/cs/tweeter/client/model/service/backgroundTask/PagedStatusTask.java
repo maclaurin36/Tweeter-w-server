@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 import edu.byu.cs.tweeter.model.net.response.Response;
 
-// TODO fix the response here
-public abstract class PagedStatusTask extends PagedTask<Status, Response> {
+public abstract class PagedStatusTask extends PagedTask<Status, PagedResponse<Status>> {
 
     protected PagedStatusTask(AuthToken authToken, User targetUser, int limit, Status lastItem, Handler messageHandler) {
         super(authToken, targetUser, limit, lastItem, messageHandler);
@@ -20,5 +20,11 @@ public abstract class PagedStatusTask extends PagedTask<Status, Response> {
     @Override
     protected final List<User> getUsersForItems(List<Status> items) {
         return items.stream().map(x -> x.user).collect(Collectors.toList());
+    }
+
+    @Override
+    protected void setItems(PagedResponse<Status> response) {
+        this.items = response.getItems();
+        this.hasMorePages = response.getHasMorePages();
     }
 }

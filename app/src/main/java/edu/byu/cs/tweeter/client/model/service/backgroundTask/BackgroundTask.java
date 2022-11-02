@@ -5,7 +5,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import java.io.IOException;
+
 import edu.byu.cs.tweeter.client.model.net.ServerFacade;
+import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
 
 public abstract class BackgroundTask implements Runnable {
 
@@ -68,7 +71,7 @@ public abstract class BackgroundTask implements Runnable {
         messageHandler.sendMessage(msg);
     }
 
-    protected abstract void runTask();
+    protected abstract void runTask() throws IOException, TweeterRemoteException;
 
     protected ServerFacade getServerFacade() {
         if(serverFacade == null) {

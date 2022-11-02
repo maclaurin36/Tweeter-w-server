@@ -6,10 +6,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.byu.cs.tweeter.client.model.service.StatusService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
+import edu.byu.cs.tweeter.model.net.request.PagedRequest;
+import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 import edu.byu.cs.tweeter.model.net.response.Response;
 import edu.byu.cs.tweeter.util.Pair;
 
@@ -24,13 +27,10 @@ public class GetStoryTask extends PagedStatusTask {
     }
 
     @Override
-    protected Response getListResponse() throws IOException, TweeterRemoteException {
-        return null;
-    }
-
-    @Override
-    protected void setItems(Response response) {
-
+    protected PagedResponse<Status> getListResponse() throws IOException, TweeterRemoteException {
+        String targetUserAlias = targetUser == null ? null : targetUser.getAlias();
+        PagedRequest<Status> request = new PagedRequest<>(authToken, targetUserAlias, limit, lastItem);
+        return getServerFacade().getStatusList(request, StatusService.GET_STORY_URL_PATH);
     }
 
 //    @Override
