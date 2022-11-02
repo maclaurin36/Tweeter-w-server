@@ -35,5 +35,25 @@ public class RegisterRequest {
         return password;
     }
 
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     private RegisterRequest() {}
 }

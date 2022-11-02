@@ -40,7 +40,7 @@ public class RequestValidator {
 
     public static void validateRegisterRequest(RegisterRequest request) {
         if (request.getAlias() == null) {
-            throw new RuntimeException("[Bad Request] Request needs to have a username");
+            throw new RuntimeException("[Bad Request] Request needs to have an alias");
         } else if (request.getPassword() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have a password");
         } else if (request.getFirstname() == null) {

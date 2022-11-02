@@ -7,8 +7,17 @@ import java.io.Serializable;
  */
 public class Response implements Serializable {
 
-    private final boolean success;
-    private final String errorMessage;
+    private boolean success;
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    private String message;
 
     /**
      * Creates an instance with a null message.
@@ -23,11 +32,11 @@ public class Response implements Serializable {
      * Creates an instance.
      *
      * @param success the success indicator.
-     * @param errorMessage the error message.
+     * @param message the error message.
      */
-    public Response(boolean success, String errorMessage) {
+    public Response(boolean success, String message) {
         this.success = success;
-        this.errorMessage = errorMessage;
+        this.message = message;
     }
 
     /**
@@ -45,6 +54,6 @@ public class Response implements Serializable {
      * @return an error message or null if the response indicates a successful result.
      */
     public String getMessage() {
-        return errorMessage;
+        return message;
     }
 }

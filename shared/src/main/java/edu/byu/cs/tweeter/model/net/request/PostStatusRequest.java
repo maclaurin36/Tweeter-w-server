@@ -15,6 +15,8 @@ public class PostStatusRequest extends AuthenticatedRequest {
         return status;
     }
 
+    public void setStatus(Status status) { this.status = status; }
+
     private PostStatusRequest() {
         super(null);
     }
