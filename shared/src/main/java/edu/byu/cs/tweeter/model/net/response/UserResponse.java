@@ -6,8 +6,8 @@ public class UserResponse extends Response {
 
     private User user;
 
-    UserResponse(boolean success, User user) {
-        super(success);
+    public UserResponse(User user) {
+        super(true);
         this.user = user;
     }
 

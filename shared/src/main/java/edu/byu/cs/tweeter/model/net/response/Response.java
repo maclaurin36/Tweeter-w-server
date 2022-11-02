@@ -7,15 +7,15 @@ import java.io.Serializable;
  */
 public class Response implements Serializable {
 
-    private boolean success;
-    private String errorMessage;
+    private final boolean success;
+    private final String errorMessage;
 
     /**
      * Creates an instance with a null message.
      *
      * @param success the success message.
      */
-    Response(boolean success) {
+    public Response(boolean success) {
         this(success, null);
     }
 
@@ -25,7 +25,7 @@ public class Response implements Serializable {
      * @param success the success indicator.
      * @param errorMessage the error message.
      */
-    Response(boolean success, String errorMessage) {
+    public Response(boolean success, String errorMessage) {
         this.success = success;
         this.errorMessage = errorMessage;
     }

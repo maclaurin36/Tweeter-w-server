@@ -1,6 +1,5 @@
 package edu.byu.cs.tweeter.server.service;
 
-import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.PagedRequest;
 import edu.byu.cs.tweeter.model.net.request.UserRequest;
@@ -8,13 +7,13 @@ import edu.byu.cs.tweeter.model.net.response.CountResponse;
 import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 import edu.byu.cs.tweeter.model.net.response.Response;
-import edu.byu.cs.tweeter.model.net.response.UserResponse;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
+import edu.byu.cs.tweeter.server.dao.UserDAO;
 
 /**
  * Contains the business logic for getting the users a user is following.
  */
-public class FollowService {
+public class FollowService extends BaseService {
 
     /**
      * Returns the users that the user specified in the request is following. Uses information in
@@ -26,43 +25,44 @@ public class FollowService {
      * @return the followees.
      */
     public PagedResponse<User> getFollowees(PagedRequest request) {
-        ServiceUtils.validatePagedRequest(request);
-        return getFollowingDAO().getFollowees(request);
+        RequestValidator.validatePagedRequest(request);
+        return getFollowDao().getFollowees(request);
     }
 
     public PagedResponse<User> getFollowers(PagedRequest request) {
-        ServiceUtils.validatePagedRequest(request);
-        return getFollowingDAO().getFollowers(request);
+        RequestValidator.validatePagedRequest(request);
+        return getFollowDao().getFollowers(request);
     }
 
     public Response follow(UserRequest request) {
-        return null;
+        RequestValidator.validateUserRequest(request);
+        return new Response(true);
     }
 
     public CountResponse getFollowerCount(UserRequest request) {
-        return null;
+        RequestValidator.validateUserRequest(request);
+        UserDAO userDAO = getUserDao();
+        User user = userDAO.getUser(request.getAlias());
+        return new CountResponse(getFollowDao().getFollowerCount(user));
     }
 
     public CountResponse getFollowingCount(UserRequest request) {
-        return null;
+        RequestValidator.validateUserRequest(request);
+        UserDAO userDao = getUserDao();
+        User user = userDao.getUser(request.getAlias());
+        return new CountResponse(getFollowDao().getFolloweeCount(user));
     }
 
     public IsFollowerResponse getIsFollower(UserRequest request) {
-        return null;
+        RequestValidator.validateUserRequest(request);
+        UserDAO userDao = getUserDao();
+        User baseUser = userDao.getUser(request.getAlias());
+        User testFollowUser = userDao.getUser(request.getAuthToken());
+        return new IsFollowerResponse(getFollowDao().getIsFollower(baseUser, testFollowUser));
     }
 
     public Response unfollow(UserRequest request) {
-        return null;
-    }
-
-    /**
-     * Returns an instance of {@link FollowDAO}. Allows mocking of the FollowDAO class
-     * for testing purposes. All usages of FollowDAO should get their FollowDAO
-     * instance from this method to allow for mocking of the instance.
-     *
-     * @return the instance.
-     */
-    FollowDAO getFollowingDAO() {
-        return new FollowDAO();
+        RequestValidator.validateUserRequest(request);
+        return new Response(true);
     }
 }

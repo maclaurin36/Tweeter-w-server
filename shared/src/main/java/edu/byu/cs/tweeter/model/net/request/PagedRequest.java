@@ -2,11 +2,11 @@ package edu.byu.cs.tweeter.model.net.request;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 
-public class PagedRequest extends AuthenticatedRequest {
+public class PagedRequest<T> extends AuthenticatedRequest {
 
     private String currentUserAlias;
     private int limit;
-    private String lastItem;
+    private T lastItem;
 
     public String getCurrentUserAlias() {
         return currentUserAlias;
@@ -24,15 +24,15 @@ public class PagedRequest extends AuthenticatedRequest {
         this.limit = limit;
     }
 
-    public String getLastItem() {
+    public T getLastItem() {
         return lastItem;
     }
 
-    public void setLastItem(String lastItem) {
+    public void setLastItem(T lastItem) {
         this.lastItem = lastItem;
     }
 
-    public PagedRequest(AuthToken authToken, String currentUserAlias, int limit, String lastItem) {
+    public PagedRequest(AuthToken authToken, String currentUserAlias, int limit, T lastItem) {
         super(authToken);
         this.currentUserAlias = currentUserAlias;
         this.limit = limit;
