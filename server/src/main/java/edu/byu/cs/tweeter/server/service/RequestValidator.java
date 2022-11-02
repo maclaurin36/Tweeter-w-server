@@ -23,7 +23,7 @@ public class RequestValidator {
     }
 
     public static void validatePagedRequest(PagedRequest request) {
-        if (request.getCurrentUserAlias() == null) {
+        if (request.getAlias() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have a followee alias");
         } else if (request.getLimit() <= 0) {
             throw new RuntimeException("[Bad Request] Request needs to have a positive limit");

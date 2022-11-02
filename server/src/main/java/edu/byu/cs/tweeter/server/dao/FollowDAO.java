@@ -51,7 +51,7 @@ public class FollowDAO {
     public PagedResponse<User> getFollowees(PagedRequest<String> request) {
         // TODO: Generates dummy data. Replace with a real implementation.
         assert request.getLimit() > 0;
-        assert request.getCurrentUserAlias() != null;
+        assert request.getAlias() != null;
 
         List<User> allFollowees = getDummyFollowees();
         List<User> responseFollowees = new ArrayList<>(request.getLimit());
@@ -76,7 +76,7 @@ public class FollowDAO {
     public PagedResponse<User> getFollowers(PagedRequest<String> request) {
         // TODO: Generates dummy data. Replace with a real implementation.
         assert request.getLimit() > 0;
-        assert request.getCurrentUserAlias() != null;
+        assert request.getAlias() != null;
 
         List<User> allFollowees = getDummyFollowees();
         List<User> responseFollowees = new ArrayList<>(request.getLimit());

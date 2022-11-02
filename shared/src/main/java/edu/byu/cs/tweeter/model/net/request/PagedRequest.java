@@ -4,16 +4,16 @@ import edu.byu.cs.tweeter.model.domain.AuthToken;
 
 public class PagedRequest<T> extends AuthenticatedRequest {
 
-    private String currentUserAlias;
+    private String alias;
     private int limit;
     private T lastItem;
 
-    public String getCurrentUserAlias() {
-        return currentUserAlias;
+    public String getAlias() {
+        return alias;
     }
 
-    public void setCurrentUserAlias(String currentUserAlias) {
-        this.currentUserAlias = currentUserAlias;
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     public int getLimit() {
@@ -32,9 +32,9 @@ public class PagedRequest<T> extends AuthenticatedRequest {
         this.lastItem = lastItem;
     }
 
-    public PagedRequest(AuthToken authToken, String currentUserAlias, int limit, T lastItem) {
+    public PagedRequest(AuthToken authToken, String alias, int limit, T lastItem) {
         super(authToken);
-        this.currentUserAlias = currentUserAlias;
+        this.alias = alias;
         this.limit = limit;
         this.lastItem = lastItem;
     }
