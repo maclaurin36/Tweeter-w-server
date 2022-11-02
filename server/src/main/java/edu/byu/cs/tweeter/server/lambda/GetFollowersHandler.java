@@ -11,7 +11,6 @@ import edu.byu.cs.tweeter.server.service.FollowService;
 public class GetFollowersHandler implements RequestHandler<PagedRequest, PagedResponse<User>> {
     @Override
     public PagedResponse<User> handleRequest(PagedRequest request, Context context) {
-        FollowService service = new FollowService();
-        return service.getFollowers(request);
+        return new FollowService().getFollowers(request);
     }
 }

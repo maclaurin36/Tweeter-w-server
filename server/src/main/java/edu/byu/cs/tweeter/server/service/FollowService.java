@@ -1,8 +1,14 @@
 package edu.byu.cs.tweeter.server.service;
 
+import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.PagedRequest;
+import edu.byu.cs.tweeter.model.net.request.UserRequest;
+import edu.byu.cs.tweeter.model.net.response.CountResponse;
+import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.PagedResponse;
+import edu.byu.cs.tweeter.model.net.response.Response;
+import edu.byu.cs.tweeter.model.net.response.UserResponse;
 import edu.byu.cs.tweeter.server.dao.FollowDAO;
 
 /**
@@ -20,21 +26,33 @@ public class FollowService {
      * @return the followees.
      */
     public PagedResponse<User> getFollowees(PagedRequest request) {
-        if(request.getCurrentUserAlias() == null) {
-            throw new RuntimeException("[Bad Request] Request needs to have a follower alias");
-        } else if(request.getLimit() <= 0) {
-            throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
-        }
+        ServiceUtils.validatePagedRequest(request);
         return getFollowingDAO().getFollowees(request);
     }
 
     public PagedResponse<User> getFollowers(PagedRequest request) {
-        if(request.getCurrentUserAlias() == null) {
-            throw new RuntimeException("[Bad Request] Request needs to have a followee alias");
-        } else if(request.getLimit() <= 0) {
-            throw new RuntimeException("[Bad Request] Request needs to have a positive limit");
-        }
+        ServiceUtils.validatePagedRequest(request);
         return getFollowingDAO().getFollowers(request);
+    }
+
+    public Response follow(UserRequest request) {
+        return null;
+    }
+
+    public CountResponse getFollowerCount(UserRequest request) {
+        return null;
+    }
+
+    public CountResponse getFollowingCount(UserRequest request) {
+        return null;
+    }
+
+    public IsFollowerResponse getIsFollower(UserRequest request) {
+        return null;
+    }
+
+    public Response unfollow(UserRequest request) {
+        return null;
     }
 
     /**
