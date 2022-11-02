@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
-import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
 import edu.byu.cs.tweeter.model.net.request.LoginRequest;
+import edu.byu.cs.tweeter.model.net.request.PagedRequest;
 import edu.byu.cs.tweeter.model.net.response.AuthenticateResponse;
 import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 
@@ -38,7 +38,7 @@ public class ServerFacade {
      *                other information required to satisfy the request.
      * @return the followees.
      */
-    public PagedResponse<User> getFollowees(FollowingRequest request, String urlPath)
+    public PagedResponse<User> getFollowees(PagedRequest request, String urlPath)
             throws IOException, TweeterRemoteException {
         return clientCommunicator.doPost(urlPath, request, null, PagedResponse.class);
     }

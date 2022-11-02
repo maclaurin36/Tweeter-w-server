@@ -9,7 +9,7 @@ import edu.byu.cs.tweeter.client.model.service.FollowService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
-import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
+import edu.byu.cs.tweeter.model.net.request.PagedRequest;
 import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 
 /**
@@ -30,7 +30,7 @@ public class GetFollowingTask extends PagedUserTask<PagedResponse<User>> {
     protected PagedResponse<User> getListResponse() throws IOException, TweeterRemoteException {
         String targetUserAlias = targetUser == null ? null : targetUser.getAlias();
         String lastAlias = lastItem == null ? null : lastItem.getAlias();
-        FollowingRequest request = new FollowingRequest(authToken, targetUserAlias, limit, lastAlias);
+        PagedRequest request = new PagedRequest(authToken, targetUserAlias, limit, lastAlias);
         return getServerFacade().getFollowees(request, FollowService.GET_FOLLOWING_URL_PATH);
     }
 

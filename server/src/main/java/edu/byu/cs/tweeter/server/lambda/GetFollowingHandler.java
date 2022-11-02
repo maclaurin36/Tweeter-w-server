@@ -4,14 +4,14 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
+import edu.byu.cs.tweeter.model.net.request.PagedRequest;
 import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 import edu.byu.cs.tweeter.server.service.FollowService;
 
 /**
  * An AWS lambda function that returns the users a user is following.
  */
-public class GetFollowingHandler implements RequestHandler<FollowingRequest, PagedResponse<User>> {
+public class GetFollowingHandler implements RequestHandler<PagedRequest, PagedResponse<User>> {
 
     /**
      * Returns the users that the user specified in the request is following. Uses information in
@@ -23,7 +23,7 @@ public class GetFollowingHandler implements RequestHandler<FollowingRequest, Pag
      * @return the followees.
      */
     @Override
-    public PagedResponse<User> handleRequest(FollowingRequest request, Context context) {
+    public PagedResponse<User> handleRequest(PagedRequest request, Context context) {
         FollowService service = new FollowService();
         return service.getFollowees(request);
     }
