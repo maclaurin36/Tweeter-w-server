@@ -24,8 +24,7 @@ import edu.byu.cs.tweeter.client.model.service.observer.ToggleFollowObserver;
 import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowService extends BaseService {
-    //TODO fix this path
-    public static final String URL_PATH = "/getfollowing";
+    public static final String GET_FOLLOWING_URL_PATH = "/getfollowing";
     public void getFollowing(User user, User lastFollowee, PaginationObserver<User> observer) {
         GetFollowingTask getFollowingTask = new GetFollowingTask(Cache.getInstance().getCurrUserAuthToken(),
                 user, PAGE_SIZE, lastFollowee, new GetFollowingHandler(observer));

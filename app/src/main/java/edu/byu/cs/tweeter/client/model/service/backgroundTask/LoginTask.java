@@ -1,8 +1,6 @@
 package edu.byu.cs.tweeter.client.model.service.backgroundTask;
 
-import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 
 import java.io.IOException;
 
@@ -13,7 +11,6 @@ import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
 import edu.byu.cs.tweeter.model.net.request.LoginRequest;
 import edu.byu.cs.tweeter.model.net.response.LoginResponse;
-import edu.byu.cs.tweeter.util.Pair;
 
 /**
  * Background task that logs in a user (i.e., starts a session).
@@ -63,7 +60,7 @@ public class LoginTask extends AuthenticateTask {
     @Override
     protected LoginResponse runAuthenticationTask() throws IOException, TweeterRemoteException {
         LoginRequest request = new LoginRequest(username, password);
-        return getServerFacade().login(request, UserService.URL_PATH);
+        return getServerFacade().login(request, UserService.LOGIN_URL_PATH);
     }
 
     /**

@@ -17,8 +17,7 @@ public class RegisterPresenter extends AuthenticatePresenter {
         }
 
         view.displayInfoMessage("Registering...");
-        // TODO uncomment this
-//        new UserService().registerUser(firstName, lastName, alias, password, imageBytesBase64, this);
+        new UserService().registerUser(firstName, lastName, alias, password, imageBytesBase64, this);
     }
 
     public String validateRegistration(String firstName, String lastName, String alias, String password, String imageToUpload) {
