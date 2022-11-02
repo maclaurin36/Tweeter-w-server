@@ -4,7 +4,7 @@ import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
 
 public class UserRequest extends AuthenticatedRequest {
-    private final String alias;
+    private String alias;
 
     public UserRequest(AuthToken authToken, String alias) {
         super(authToken);
@@ -14,4 +14,6 @@ public class UserRequest extends AuthenticatedRequest {
     public String getAlias() {
         return alias;
     }
+
+    private UserRequest() {super(null);}
 }

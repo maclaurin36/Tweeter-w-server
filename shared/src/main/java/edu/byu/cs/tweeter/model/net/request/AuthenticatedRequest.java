@@ -16,4 +16,6 @@ public class AuthenticatedRequest {
     public void setAuthToken(AuthToken authToken) {
         this.authToken = authToken;
     }
+
+    private AuthenticatedRequest() {}
 }

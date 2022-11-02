@@ -1,11 +1,11 @@
 package edu.byu.cs.tweeter.model.net.request;
 
 public class RegisterRequest {
-    private final String alias;
-    private final String firstname;
-    private final String lastname;
-    private final String image;
-    private final String password;
+    private String alias;
+    private String firstname;
+    private String lastname;
+    private String image;
+    private String password;
 
     public RegisterRequest(String alias, String firstname, String lastname, String image, String password) {
         this.alias = alias;
@@ -34,4 +34,6 @@ public class RegisterRequest {
     public String getPassword() {
         return password;
     }
+
+    private RegisterRequest() {}
 }

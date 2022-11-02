@@ -24,12 +24,12 @@ public class FollowService extends BaseService {
      * @param request contains the data required to fulfill the request.
      * @return the followees.
      */
-    public PagedResponse<User> getFollowees(PagedRequest request) {
+    public PagedResponse<User> getFollowees(PagedRequest<String> request) {
         RequestValidator.validatePagedRequest(request);
         return getFollowDao().getFollowees(request);
     }
 
-    public PagedResponse<User> getFollowers(PagedRequest request) {
+    public PagedResponse<User> getFollowers(PagedRequest<String> request) {
         RequestValidator.validatePagedRequest(request);
         return getFollowDao().getFollowers(request);
     }

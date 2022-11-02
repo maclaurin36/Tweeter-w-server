@@ -8,9 +8,9 @@ import edu.byu.cs.tweeter.model.net.request.PagedRequest;
 import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 import edu.byu.cs.tweeter.server.service.FollowService;
 
-public class GetFollowersHandler implements RequestHandler<PagedRequest, PagedResponse<User>> {
+public class GetFollowersHandler implements RequestHandler<PagedRequest<String>, PagedResponse<User>> {
     @Override
-    public PagedResponse<User> handleRequest(PagedRequest request, Context context) {
+    public PagedResponse<User> handleRequest(PagedRequest<String> request, Context context) {
         return new FollowService().getFollowers(request);
     }
 }

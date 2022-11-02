@@ -48,7 +48,7 @@ public class FollowDAO {
      *                other information required to satisfy the request.
      * @return the followees.
      */
-    public PagedResponse<User> getFollowees(PagedRequest request) {
+    public PagedResponse<User> getFollowees(PagedRequest<String> request) {
         // TODO: Generates dummy data. Replace with a real implementation.
         assert request.getLimit() > 0;
         assert request.getCurrentUserAlias() != null;
@@ -73,7 +73,7 @@ public class FollowDAO {
         return new PagedResponse<User>(true, hasMorePages, responseFollowees);
     }
 
-    public PagedResponse<User> getFollowers(PagedRequest request) {
+    public PagedResponse<User> getFollowers(PagedRequest<String> request) {
         // TODO: Generates dummy data. Replace with a real implementation.
         assert request.getLimit() > 0;
         assert request.getCurrentUserAlias() != null;

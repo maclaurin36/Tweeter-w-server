@@ -10,7 +10,7 @@ import edu.byu.cs.tweeter.model.net.request.UserRequest;
 public class RequestValidator {
     public static void validateAuthenticatedRequest(AuthenticatedRequest request) {
         if (request.getAuthToken() == null) {
-            throw new RuntimeException("[Bad Request] Request needs to have an authentication token");
+            throw new RuntimeException("[Unauthorized] Request needs to have an authentication token");
         }
     }
 
@@ -54,7 +54,7 @@ public class RequestValidator {
 
     public static void validateUserRequest(UserRequest request) {
         if (request.getAlias() == null) {
-            throw new RuntimeException("[Bad Request] Request needs to have a username");
+            throw new RuntimeException("[Bad Request] Request needs to have an alias");
         }
         validateAuthenticatedRequest(request);
     }

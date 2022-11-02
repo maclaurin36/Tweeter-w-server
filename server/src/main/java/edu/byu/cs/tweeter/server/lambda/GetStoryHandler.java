@@ -8,9 +8,9 @@ import edu.byu.cs.tweeter.model.net.request.PagedRequest;
 import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 import edu.byu.cs.tweeter.server.service.StatusService;
 
-public class GetStoryHandler implements RequestHandler<PagedRequest, PagedResponse<Status>> {
+public class GetStoryHandler implements RequestHandler<PagedRequest<Status>, PagedResponse<Status>> {
     @Override
-    public PagedResponse<Status> handleRequest(PagedRequest request, Context context) {
+    public PagedResponse<Status> handleRequest(PagedRequest<Status> request, Context context) {
         return new StatusService().getStory(request);
     }
 }

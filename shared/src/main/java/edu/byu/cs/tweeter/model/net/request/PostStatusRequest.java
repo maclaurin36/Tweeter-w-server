@@ -4,7 +4,7 @@ import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
 
 public class PostStatusRequest extends AuthenticatedRequest {
-    private final Status status;
+    private Status status;
 
     public PostStatusRequest(AuthToken authToken, Status status) {
         super(authToken);
@@ -13,5 +13,9 @@ public class PostStatusRequest extends AuthenticatedRequest {
 
     public Status getStatus() {
         return status;
+    }
+
+    private PostStatusRequest() {
+        super(null);
     }
 }
