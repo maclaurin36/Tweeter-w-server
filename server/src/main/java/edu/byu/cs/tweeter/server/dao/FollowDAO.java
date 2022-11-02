@@ -6,7 +6,6 @@ import java.util.List;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.FollowerRequest;
 import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
-import edu.byu.cs.tweeter.model.net.response.FollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 import edu.byu.cs.tweeter.util.FakeData;
 
@@ -68,7 +67,7 @@ public class FollowDAO {
         return new PagedResponse<User>(true, hasMorePages, responseFollowees);
     }
 
-    public FollowerResponse getFollowers(FollowerRequest request) {
+    public PagedResponse<User> getFollowers(FollowerRequest request) {
         // TODO: Generates dummy data. Replace with a real implementation.
         assert request.getLimit() > 0;
         assert request.getFolloweeAlias() != null;
@@ -90,7 +89,7 @@ public class FollowDAO {
             }
         }
 
-        return new FollowerResponse(responseFollowees, hasMorePages);
+        return new PagedResponse<User>(true, hasMorePages, responseFollowees);
     }
 
     /**

@@ -8,7 +8,7 @@ public class PagedResponse<T> extends Response {
     private List<T> items;
 
     // Error response
-    PagedResponse(String message) {
+    public PagedResponse(String message) {
         super(false, message);
         this.hasMorePages = false;
     }
