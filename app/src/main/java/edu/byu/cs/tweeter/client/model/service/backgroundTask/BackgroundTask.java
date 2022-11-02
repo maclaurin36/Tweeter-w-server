@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import edu.byu.cs.tweeter.client.model.net.ServerFacade;
+
 public abstract class BackgroundTask implements Runnable {
 
     private static final String LOG_TAG = "Task";
@@ -14,6 +16,7 @@ public abstract class BackgroundTask implements Runnable {
     public static final String EXCEPTION_KEY = "exception";
 
     protected final Handler messageHandler;
+    protected ServerFacade serverFacade;
 
     protected BackgroundTask(Handler messageHandler) {
         this.messageHandler = messageHandler;
@@ -66,4 +69,12 @@ public abstract class BackgroundTask implements Runnable {
     }
 
     protected abstract void runTask();
+
+    protected ServerFacade getServerFacade() {
+        if(serverFacade == null) {
+            serverFacade = new ServerFacade();
+        }
+
+        return serverFacade;
+    }
 }

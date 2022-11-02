@@ -32,49 +32,13 @@ public class LoginTask extends AuthenticateTask {
      */
     protected AuthToken authToken;
 
-    private ServerFacade serverFacade;
-
     public LoginTask(String username, String password, Handler messageHandler) {
         super(messageHandler, username, password);
     }
-
-//    @Override
-//    protected void runTask() {
-//        try {
-//            LoginRequest request = new LoginRequest(username, password);
-//            AuthenticateResponse response = getServerFacade().login(request, UserService.URL_PATH);
-//
-//            if (response.isSuccess()) {
-//                this.user = response.getUser();
-//                this.authToken = response.getAuthToken();
-//                sendSuccessMessage();
-//            } else {
-//                sendFailedMessage(response.getMessage());
-//            }
-//        } catch (Exception ex) {
-//            Log.e(LOG_TAG, ex.getMessage(), ex);
-//            sendExceptionMessage(ex);
-//        }
-//    }
 
     @Override
     protected AuthenticateResponse runAuthenticationTask() throws IOException, TweeterRemoteException {
         LoginRequest request = new LoginRequest(username, password);
         return getServerFacade().login(request, UserService.LOGIN_URL_PATH);
-    }
-
-    /**
-     * Returns an instance of {@link ServerFacade}. Allows mocking of the ServerFacade class for
-     * testing purposes. All usages of ServerFacade should get their instance from this method to
-     * allow for proper mocking.
-     *
-     * @return the instance.
-     */
-    ServerFacade getServerFacade() {
-        if(serverFacade == null) {
-            serverFacade = new ServerFacade();
-        }
-
-        return serverFacade;
     }
 }

@@ -15,6 +15,10 @@ import edu.byu.cs.tweeter.model.domain.User;
 
 public class StatusService extends BaseService {
 
+    public static final String GET_FEED_URL_PATH = "/getfeed";
+    public static final String GET_STORY_URL_PATH = "/getstory";
+    public static final String POST_STATUS_URL_PATH = "/poststatus";
+
     public void getFeed(User user, Status lastStatus, PaginationObserver<Status> observer) {
         GetFeedTask getFeedTask = new GetFeedTask(Cache.getInstance().getCurrUserAuthToken(), user, PAGE_SIZE, lastStatus, new GetFeedHandler(observer));
         BackgroundTaskUtils.runTask(getFeedTask);

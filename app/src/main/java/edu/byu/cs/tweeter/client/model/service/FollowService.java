@@ -25,6 +25,13 @@ import edu.byu.cs.tweeter.model.domain.User;
 
 public class FollowService extends BaseService {
     public static final String GET_FOLLOWING_URL_PATH = "/getfollowing";
+    public static final String FOLLOW_URL_PATH = "/follow";
+    public static final String GET_FOLLOWER_COUNT_URL_PATH = "/getfollowercount";
+    public static final String GET_FOLLOWERS_URL_PATH = "/getfollowers";
+    public static final String GET_FOLLOWING_COUNT_URL_PATH = "/getfollowingcount";
+    public static final String IS_FOLLOWER_URL_PATH = "/isfollower";
+    public static final String UNFOLLOW_URL_PATH = "/unfollow";
+
     public void getFollowing(User user, User lastFollowee, PaginationObserver<User> observer) {
         GetFollowingTask getFollowingTask = new GetFollowingTask(Cache.getInstance().getCurrUserAuthToken(),
                 user, PAGE_SIZE, lastFollowee, new GetFollowingHandler(observer));

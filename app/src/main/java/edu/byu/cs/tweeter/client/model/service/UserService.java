@@ -16,6 +16,10 @@ import edu.byu.cs.tweeter.client.model.service.observer.LogoutObserver;
 
 public class UserService extends BaseService {
     public static final String LOGIN_URL_PATH = "/login";
+    public static final String GET_USER_URL_PATH = "/getuser";
+    public static final String REGISTER_URL_PATH = "/register";
+    public static final String LOGOUT_URL_PATH = "/logout";
+
     public void login(String username, String password, AuthenticateObserver observer) {
         // Run the login task in the background to log the user in
         // Send the login request.

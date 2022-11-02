@@ -32,8 +32,6 @@ public abstract class AuthenticateTask extends BackgroundTask {
      */
     protected final String password;
 
-    private ServerFacade serverFacade;
-
     protected AuthenticateTask(Handler messageHandler, String username, String password) {
         super(messageHandler);
         this.username = username;
@@ -72,20 +70,5 @@ public abstract class AuthenticateTask extends BackgroundTask {
     protected void loadSuccessBundle(Bundle msgBundle) {
         msgBundle.putSerializable(USER_KEY, authenticatedUser);
         msgBundle.putSerializable(AUTH_TOKEN_KEY, authToken);
-    }
-
-    /**
-     * Returns an instance of {@link ServerFacade}. Allows mocking of the ServerFacade class for
-     * testing purposes. All usages of ServerFacade should get their instance from this method to
-     * allow for proper mocking.
-     *
-     * @return the instance.
-     */
-    ServerFacade getServerFacade() {
-        if(serverFacade == null) {
-            serverFacade = new ServerFacade();
-        }
-
-        return serverFacade;
     }
 }

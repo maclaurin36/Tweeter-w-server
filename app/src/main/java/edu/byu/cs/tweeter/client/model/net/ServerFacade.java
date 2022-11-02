@@ -2,12 +2,23 @@ package edu.byu.cs.tweeter.client.model.net;
 
 import java.io.IOException;
 
+import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
+import edu.byu.cs.tweeter.model.net.request.AuthenticatedRequest;
 import edu.byu.cs.tweeter.model.net.request.LoginRequest;
 import edu.byu.cs.tweeter.model.net.request.PagedRequest;
+import edu.byu.cs.tweeter.model.net.request.PostStatusRequest;
+import edu.byu.cs.tweeter.model.net.request.RegisterRequest;
+import edu.byu.cs.tweeter.model.net.request.UserRequest;
 import edu.byu.cs.tweeter.model.net.response.AuthenticateResponse;
+import edu.byu.cs.tweeter.model.net.response.CountResponse;
+import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.PagedResponse;
+import edu.byu.cs.tweeter.model.net.response.Response;
+import edu.byu.cs.tweeter.model.net.response.StatusPagedResponse;
+import edu.byu.cs.tweeter.model.net.response.UserPagedResponse;
+import edu.byu.cs.tweeter.model.net.response.UserResponse;
 
 /**
  * Acts as a Facade to the Tweeter server. All network requests to the server should go through
@@ -29,17 +40,40 @@ public class ServerFacade {
         return clientCommunicator.doPost(urlPath, request, null, AuthenticateResponse.class);
     }
 
-    /**
-     * Returns the users that the user specified in the request is following. Uses information in
-     * the request object to limit the number of followees returned and to return the next set of
-     * followees after any that were returned in a previous request.
-     *
-     * @param request contains information about the user whose followees are to be returned and any
-     *                other information required to satisfy the request.
-     * @return the followees.
-     */
-    public PagedResponse<User> getFollowees(PagedRequest request, String urlPath)
+    public AuthenticateResponse register(RegisterRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, AuthenticateResponse.class);
+    }
+
+    public Response logout(AuthenticatedRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, Response.class);
+    }
+
+    public UserResponse getUser(UserRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, UserResponse.class);
+    }
+
+    public PagedResponse<User> getUserList(PagedRequest<String> request, String urlPath)
             throws IOException, TweeterRemoteException {
-        return clientCommunicator.doPost(urlPath, request, null, PagedResponse.class);
+        return clientCommunicator.doPost(urlPath, request, null, UserPagedResponse.class);
+    }
+
+    public PagedResponse<Status> getStatusList(PagedRequest<Status> request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, StatusPagedResponse.class);
+    }
+
+    public Response followUnfollow(UserRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, Response.class);
+    }
+
+    public CountResponse getUserCount(UserRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, CountResponse.class);
+    }
+
+    public IsFollowerResponse getIsFollower(UserRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, IsFollowerResponse.class);
+    }
+
+    public Response postStatus(PostStatusRequest request, String urlPath) throws IOException, TweeterRemoteException {
+        return clientCommunicator.doPost(urlPath, request, null, Response.class);
     }
 }
