@@ -9,6 +9,7 @@
 //import java.util.concurrent.CountDownLatch;
 //
 //import edu.byu.cs.tweeter.client.model.net.ServerFacade;
+//import edu.byu.cs.tweeter.client.model.service.observer.PaginationObserver;
 //import edu.byu.cs.tweeter.model.domain.AuthToken;
 //import edu.byu.cs.tweeter.model.domain.User;
 //import edu.byu.cs.tweeter.util.FakeData;
@@ -56,7 +57,7 @@
 //     * on the countDownLatch so tests can wait for the background thread to call a method on the
 //     * observer.
 //     */
-//    private class FollowServiceObserver implements FollowService.GetFollowingObserver {
+//    private class FollowServiceObserver implements PaginationObserver {
 //
 //        private boolean success;
 //        private String message;
@@ -65,7 +66,7 @@
 //        private Exception exception;
 //
 //        @Override
-//        public void handleSuccess(List<User> followees, boolean hasMorePages) {
+//        public void handleGetListSuccess(List followees, Boolean hasMorePages) {
 //            this.success = true;
 //            this.message = null;
 //            this.followees = followees;
@@ -76,25 +77,8 @@
 //        }
 //
 //        @Override
-//        public void handleFailure(String message) {
-//            this.success = false;
-//            this.message = message;
-//            this.followees = null;
-//            this.hasMorePages = false;
-//            this.exception = null;
+//        public void handlePaginationFailure() {
 //
-//            countDownLatch.countDown();
-//        }
-//
-//        @Override
-//        public void handleException(Exception exception) {
-//            this.success = false;
-//            this.message = null;
-//            this.followees = null;
-//            this.hasMorePages = false;
-//            this.exception = exception;
-//
-//            countDownLatch.countDown();
 //        }
 //
 //        public boolean isSuccess() {
@@ -115,6 +99,17 @@
 //
 //        public Exception getException() {
 //            return exception;
+//        }
+//
+//        @Override
+//        public void handleFailure(String message) {
+//            this.success = false;
+//            this.message = message;
+//            this.followees = null;
+//            this.hasMorePages = false;
+//            this.exception = null;
+//
+//            countDownLatch.countDown();
 //        }
 //    }
 //

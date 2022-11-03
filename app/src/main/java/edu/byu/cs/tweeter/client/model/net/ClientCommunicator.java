@@ -92,6 +92,7 @@ class ClientCommunicator {
                     String responseString = getResponse(connection.getInputStream());
                     return JsonSerializer.deserialize(responseString, returnType);
                 case HttpURLConnection.HTTP_BAD_REQUEST:
+                case HttpURLConnection.HTTP_FORBIDDEN:
                     ErrorResponse errorResponse = getErrorResponse(connection);
                     throw new TweeterRequestException(errorResponse.errorMessage, errorResponse.errorType, errorResponse.stackTrace);
                 case HttpURLConnection.HTTP_INTERNAL_ERROR:

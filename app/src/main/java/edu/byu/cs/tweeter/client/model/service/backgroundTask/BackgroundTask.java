@@ -9,8 +9,9 @@ import java.io.IOException;
 
 import edu.byu.cs.tweeter.client.model.net.ServerFacade;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
+import edu.byu.cs.tweeter.model.net.response.Response;
 
-public abstract class BackgroundTask implements Runnable {
+public abstract class BackgroundTask<T extends Response> implements Runnable {
 
     private static final String LOG_TAG = "Task";
 
