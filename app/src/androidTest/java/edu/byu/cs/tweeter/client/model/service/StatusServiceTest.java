@@ -2,16 +2,13 @@ package edu.byu.cs.tweeter.client.model.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import edu.byu.cs.tweeter.client.cache.Cache;
-import edu.byu.cs.tweeter.client.model.service.StatusService;
 import edu.byu.cs.tweeter.client.model.service.observer.PaginationObserver;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.Status;
@@ -38,7 +35,6 @@ public class StatusServiceTest {
         private String message;
         private List<Status> storyItems;
         private boolean hasMorePages;
-        private Exception exception;
 
         @Override
         public void handleGetListSuccess(List<Status> items, Boolean hasMorePages) {
@@ -46,7 +42,6 @@ public class StatusServiceTest {
             this.message = null;
             this.storyItems = items;
             this.hasMorePages = hasMorePages;
-            this.exception = null;
             countDownLatch.countDown();
         }
 
@@ -75,10 +70,6 @@ public class StatusServiceTest {
         public boolean isHasMorePages() {
             return hasMorePages;
         }
-
-        public Exception getException() {
-            return exception;
-        }
     }
 
     @Test
@@ -89,14 +80,7 @@ public class StatusServiceTest {
         resetCountDownLatch();
 
         Cache cache = Mockito.mock(Cache.class);
-
-        Answer<AuthToken> getAuthTokenAnswer = new Answer<>() {
-            @Override
-            public AuthToken answer(InvocationOnMock invocation) throws Throwable {
-                return FakeData.getInstance().getAuthToken();
-            }
-        };
-
+        Answer<AuthToken> getAuthTokenAnswer = invocation -> FakeData.getInstance().getAuthToken();
         Mockito.doAnswer(getAuthTokenAnswer).when(cache).getCurrUserAuthToken();
 
         Cache.setInstance(cache);
@@ -107,7 +91,6 @@ public class StatusServiceTest {
         Pair<List<Status>, Boolean> pageResults = FakeData.getInstance().getPageOfStatus(null, 10);
 
         Mockito.verify(observer).handleGetListSuccess(Mockito.anyList(), Mockito.anyBoolean());
-        Assertions.assertNull(observer.getException());
         Assertions.assertNull(observer.getMessage());
         Assertions.assertTrue(observer.isSuccess());
         Assertions.assertTrue(observer.isHasMorePages());
