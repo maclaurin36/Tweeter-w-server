@@ -1,6 +1,7 @@
 package edu.byu.cs.tweeter.server.service;
 
 import edu.byu.cs.tweeter.model.net.request.AuthenticatedRequest;
+import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.model.net.request.LoginRequest;
 import edu.byu.cs.tweeter.model.net.request.PagedRequest;
 import edu.byu.cs.tweeter.model.net.request.PostStatusRequest;
@@ -55,6 +56,15 @@ public class RequestValidator {
     public static void validateUserRequest(UserRequest request) {
         if (request.getAlias() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have an alias");
+        }
+        validateAuthenticatedRequest(request);
+    }
+
+    public static void validateIsFollowerRequest(IsFollowerRequest request) {
+        if (request.getFollowerAlias() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have a follower alias");
+        } else if (request.getFolloweeAlias() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have a followee alias");
         }
         validateAuthenticatedRequest(request);
     }

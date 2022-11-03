@@ -42,14 +42,14 @@ public abstract class AuthenticateTask extends BackgroundTask {
     @Override
     protected final void runTask() {
         try {
-            AuthenticateResponse loginResult =  runAuthenticationTask();
-            if (loginResult.isSuccess()) {
-                authenticatedUser = loginResult.getUser();
-                authToken = loginResult.getAuthToken();
+            AuthenticateResponse authenticateResponse =  runAuthenticationTask();
+            if (authenticateResponse.isSuccess()) {
+                authenticatedUser = authenticateResponse.getUser();
+                authToken = authenticateResponse.getAuthToken();
                 sendSuccessMessage();
             }
             else {
-                sendFailedMessage(loginResult.getMessage());
+                sendFailedMessage(authenticateResponse.getMessage());
             }
         }
         catch (Exception ex) {

@@ -4,7 +4,9 @@ import android.os.Handler;
 
 import java.io.IOException;
 
+import edu.byu.cs.tweeter.client.model.service.UserService;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
+import edu.byu.cs.tweeter.model.net.request.RegisterRequest;
 import edu.byu.cs.tweeter.model.net.response.AuthenticateResponse;
 
 /**
@@ -35,19 +37,10 @@ public class RegisterTask extends AuthenticateTask {
         this.image = image;
     }
 
-    // TODO convert this and fill it in
     @Override
     protected AuthenticateResponse runAuthenticationTask() throws IOException, TweeterRemoteException {
-        return null;
+        RegisterRequest registerRequest = new RegisterRequest(username, firstName, lastName, image, password);
+        return getServerFacade().register(registerRequest, UserService.REGISTER_URL_PATH);
     }
 
-
-//    @Override
-//    protected Pair<User, AuthToken> runAuthenticationTask() {
-//        User registeredUser = getFakeData().getFirstUser();
-//        AuthToken authToken = getFakeData().getAuthToken();
-//        return new Pair<>(registeredUser, authToken);
-//    }
 }
-
-// TODO implement lambda stuff

@@ -36,9 +36,9 @@ public class UserService extends BaseService {
 
     public AuthenticateResponse register(RegisterRequest request) {
         RequestValidator.validateRegisterRequest(request);
-        User user = new User(request.getFirstname(),request.getLastname(),request.getAlias(), request.getImage());
-        AuthToken authToken = new AuthToken();
-        return new AuthenticateResponse(user, authToken);
+//        User user = new User(request.getFirstname(),request.getLastname(),request.getAlias(), request.getImage());
+//        AuthToken authToken = new AuthToken();
+        return new AuthenticateResponse(getDummyUser(), getDummyAuthToken());
     }
 
 

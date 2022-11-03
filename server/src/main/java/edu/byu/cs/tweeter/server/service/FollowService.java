@@ -1,6 +1,7 @@
 package edu.byu.cs.tweeter.server.service;
 
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.model.net.request.PagedRequest;
 import edu.byu.cs.tweeter.model.net.request.UserRequest;
 import edu.byu.cs.tweeter.model.net.response.CountResponse;
@@ -53,12 +54,12 @@ public class FollowService extends BaseService {
         return new CountResponse(getFollowDao().getFolloweeCount(user));
     }
 
-    public IsFollowerResponse getIsFollower(UserRequest request) {
-        RequestValidator.validateUserRequest(request);
+    public IsFollowerResponse getIsFollower(IsFollowerRequest request) {
+        RequestValidator.validateIsFollowerRequest(request);
         UserDAO userDao = getUserDao();
-        User baseUser = userDao.getUser(request.getAlias());
-        User testFollowUser = userDao.getUser(request.getAuthToken());
-        return new IsFollowerResponse(getFollowDao().getIsFollower(baseUser, testFollowUser));
+        User followeeUser = userDao.getUser(request.getFolloweeAlias());
+        User followerUser = userDao.getUser(request.getFollowerAlias());
+        return new IsFollowerResponse(getFollowDao().getIsFollower(followeeUser, followerUser));
     }
 
     public Response unfollow(UserRequest request) {

@@ -32,9 +32,9 @@ public class FollowDAO {
         return getDummyFollowers().size();
     }
 
-    public Boolean getIsFollower(User baseUser, User testFollowUser) {
-        assert baseUser != null;
-        assert testFollowUser != null;
+    public Boolean getIsFollower(User followee, User follower) {
+        assert followee != null;
+        assert follower != null;
         return new Random().nextInt() > 0;
     }
 
