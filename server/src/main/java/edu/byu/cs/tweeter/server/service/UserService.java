@@ -36,6 +36,8 @@ public class UserService extends BaseService {
         }
 
         AuthToken authToken = new AuthToken(UUID.randomUUID().toString(), new Date().getTime());
+
+        daoFactory.getUserDao().insertAuthToken(userWithPassword.getAlias(), authToken);
         User user = new User(userWithPassword.getFirstName(), userWithPassword.getLastName(), userWithPassword.getAlias(), userWithPassword.getImageUrl());
         return new AuthenticateResponse(user, authToken);
     }
