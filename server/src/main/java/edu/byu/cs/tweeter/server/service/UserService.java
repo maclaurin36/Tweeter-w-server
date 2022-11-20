@@ -1,5 +1,8 @@
 package edu.byu.cs.tweeter.server.service;
 
+import java.util.Date;
+import java.util.UUID;
+
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.AuthenticatedRequest;
@@ -9,46 +12,49 @@ import edu.byu.cs.tweeter.model.net.request.UserRequest;
 import edu.byu.cs.tweeter.model.net.response.AuthenticateResponse;
 import edu.byu.cs.tweeter.model.net.response.Response;
 import edu.byu.cs.tweeter.model.net.response.UserResponse;
-import edu.byu.cs.tweeter.server.dao.UserDAO;
-import edu.byu.cs.tweeter.util.FakeData;
+import edu.byu.cs.tweeter.server.dao.DaoFactory;
+import edu.byu.cs.tweeter.server.dao.dto.FullUser;
+import edu.byu.cs.tweeter.server.dao.dynamo.bean.Authentication;
 
 public class UserService extends BaseService {
+
+    public UserService(DaoFactory daoFactory) {
+        super(daoFactory);
+    }
 
     public AuthenticateResponse login(LoginRequest request) {
         RequestValidator.validateLoginRequest(request);
 
-        // TODO: Generates dummy data. Replace with a real implementation.
-        User user = getDummyUser();
-        AuthToken authToken = getDummyAuthToken();
+        FullUser userWithPassword = daoFactory.getUserDao().getUser(request.getUsername());
+
+        if (userWithPassword == null) {
+            throw new RuntimeException("[Bad Request] User with given alias not found");
+        }
+
+        if (!userWithPassword.getPassword().equals(request.getPassword())) {
+            throw new RuntimeException("[Unauthorized] Given password did not match password in the database");
+        }
+
+        AuthToken authToken = new AuthToken(UUID.randomUUID().toString(), new Date().getTime());
+        User user = new User(userWithPassword.getFirstName(), userWithPassword.getLastName(), userWithPassword.getAlias(), userWithPassword.getImageUrl());
         return new AuthenticateResponse(user, authToken);
     }
 
     public UserResponse getUser(UserRequest request) {
         RequestValidator.validateUserRequest(request);
-        UserDAO userDAO = getUserDao();
-        return new UserResponse(userDAO.getUser(request.getAlias()));
+        FullUser fullUser = daoFactory.getUserDao().getUser(request.getAlias());
+        User user = new User(fullUser.getFirstName(), fullUser.getLastName(), fullUser.getAlias(), fullUser.getImageUrl());
+        return new UserResponse(user);
     }
 
     public Response logout(AuthenticatedRequest request) {
         RequestValidator.validateAuthenticatedRequest(request);
-        return new Response(true);
+
+        return new Response(daoFactory.getUserDao().invalidateAuthToken(request.getAuthToken()));
     }
 
     public AuthenticateResponse register(RegisterRequest request) {
         RequestValidator.validateRegisterRequest(request);
-//        User user = new User(request.getFirstname(),request.getLastname(),request.getAlias(), request.getImage());
-//        AuthToken authToken = new AuthToken();
-        return new AuthenticateResponse(getDummyUser(), getDummyAuthToken());
-    }
-
-
-    User getDummyUser() {
-        return getFakeData().getFirstUser();
-    }
-    AuthToken getDummyAuthToken() {
-        return getFakeData().getAuthToken();
-    }
-    FakeData getFakeData() {
-        return FakeData.getInstance();
+        return daoFactory.getUserDao().register(request);
     }
 }

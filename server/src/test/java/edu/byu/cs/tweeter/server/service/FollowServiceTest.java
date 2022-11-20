@@ -11,7 +11,7 @@
 //import edu.byu.cs.tweeter.model.domain.User;
 //import edu.byu.cs.tweeter.model.net.request.FollowingRequest;
 //import edu.byu.cs.tweeter.model.net.response.UserResponse;
-//import edu.byu.cs.tweeter.server.dao.FollowDAO;
+//import edu.byu.cs.tweeter.server.dao.dynamo.FollowDAO;
 //
 //public class FollowServiceTest {
 //

@@ -5,6 +5,8 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 import edu.byu.cs.tweeter.model.net.request.LoginRequest;
 import edu.byu.cs.tweeter.model.net.response.AuthenticateResponse;
+import edu.byu.cs.tweeter.server.dao.DaoFactory;
+import edu.byu.cs.tweeter.server.dao.dynamo.DynamoDaoFactory;
 import edu.byu.cs.tweeter.server.service.UserService;
 
 /**
@@ -14,6 +16,7 @@ import edu.byu.cs.tweeter.server.service.UserService;
 public class LoginHandler implements RequestHandler<LoginRequest, AuthenticateResponse> {
     @Override
     public AuthenticateResponse handleRequest(LoginRequest loginRequest, Context context) {
-        return new UserService().login(loginRequest);
+        DaoFactory daoFactory = new DynamoDaoFactory();
+        return new UserService(daoFactory).login(loginRequest);
     }
 }
