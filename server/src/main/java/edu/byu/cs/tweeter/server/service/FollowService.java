@@ -1,6 +1,10 @@
 package edu.byu.cs.tweeter.server.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.net.request.FollowUnfollowRequest;
 import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.model.net.request.PagedRequest;
 import edu.byu.cs.tweeter.model.net.request.UserRequest;
@@ -21,19 +25,19 @@ public class FollowService extends BaseService {
         super(daoFactory);
     }
 
-    public Response follow(UserRequest request) {
-        RequestValidator.validateUserRequest(request);
-        Boolean insertSucceeded = daoFactory.getFollowDao().insertFollower(request);
+    public Response follow(FollowUnfollowRequest request) {
+        RequestValidator.validateFollowUnfollowRequest(request);
+        Boolean insertSucceeded = daoFactory.getFollowDao().insertFollower(request.getUserToFollowUnfollowAlias(), request.getUserAlias());
+        daoFactory.getUserDao().incrementFollowerCount(request.getUserToFollowUnfollowAlias());
+        daoFactory.getUserDao().incrementFollowingCount(request.getUserAlias());
         return new Response(insertSucceeded);
-
-        // Insert into the follows table (both as a follower and as a followee)
-        // Increment the follower count of the user with that request alias
-        // Increment the following count of the user with
     }
 
-    public Response unfollow(UserRequest request) {
-        RequestValidator.validateUserRequest(request);
-        Boolean deleteSucceeded = daoFactory.getFollowDao().deleteFollower(request);
+    public Response unfollow(FollowUnfollowRequest request) {
+        RequestValidator.validateFollowUnfollowRequest(request);
+        Boolean deleteSucceeded = daoFactory.getFollowDao().deleteFollower(request.getUserToFollowUnfollowAlias(), request.getUserAlias());
+        daoFactory.getUserDao().decrementFollowerCount(request.getUserToFollowUnfollowAlias());
+        daoFactory.getUserDao().decrementFollowingCount(request.getUserAlias());
         return new Response(deleteSucceeded);
     }
 
@@ -44,7 +48,10 @@ public class FollowService extends BaseService {
 
     public PagedResponse<User> getFollowing(PagedRequest<String> request) {
         RequestValidator.validatePagedRequest(request);
-        return daoFactory.getFollowDao().getFollowing(request);
+        List<String> aliases = daoFactory.getFollowDao().getFollowing(request);
+        List<FullUser> fullUsers = daoFactory.getUserDao().batchGetUser(aliases);
+        List<User> users = fullUsers.stream().map(fullUser -> new User(fullUser.getFirstName(), fullUser.getLastName(), fullUser.getAlias(), fullUser.getImageUrl())).collect(Collectors.toList());
+        return new PagedResponse<>(true, !(users.size() < request.getLimit()), users);
     }
 
     public CountResponse getFollowerCount(UserRequest request) {

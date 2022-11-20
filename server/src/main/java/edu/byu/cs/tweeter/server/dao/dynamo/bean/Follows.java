@@ -7,7 +7,6 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.*;
 public class Follows {
     private String follower_handle;
     private String followee_handle;
-//    private User follower;
 
     @DynamoDbPartitionKey
     @DynamoDbSecondarySortKey(indexNames = DynamoFollowDao.INDEX_NAME)
@@ -29,19 +28,10 @@ public class Follows {
         this.followee_handle = followee_handle;
     }
 
-//    public User getFollower() {
-//        return follower;
-//    }
-
-//    public void setFollower(User follower) {
-//        this.follower = follower;
-//    }
-
     public Follows() {}
 
-    public Follows(String follower_handle, String followee_handle, User follower) {
-        this.follower_handle = follower_handle;
-        this.followee_handle = followee_handle;
-//        this.follower = follower;
+    public Follows(String userToBeFollowedAlias, String userToFollowAlias) {
+        this.follower_handle = userToBeFollowedAlias;
+        this.followee_handle = userToFollowAlias;
     }
 }

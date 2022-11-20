@@ -1,6 +1,8 @@
 package edu.byu.cs.tweeter.server.service.utility;
 
+import edu.byu.cs.tweeter.model.domain.Follow;
 import edu.byu.cs.tweeter.model.net.request.AuthenticatedRequest;
+import edu.byu.cs.tweeter.model.net.request.FollowUnfollowRequest;
 import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.model.net.request.LoginRequest;
 import edu.byu.cs.tweeter.model.net.request.PagedRequest;
@@ -65,6 +67,15 @@ public class RequestValidator {
             throw new RuntimeException("[Bad Request] Request needs to have a follower alias");
         } else if (request.getFolloweeAlias() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have a followee alias");
+        }
+        validateAuthenticatedRequest(request);
+    }
+
+    public static void validateFollowUnfollowRequest(FollowUnfollowRequest request) {
+        if (request.getUserAlias() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have an alias");
+        } else if (request.getUserToFollowUnfollowAlias() == null) {
+            throw new RuntimeException("[Bad Request] Request needs to have a user to follow/unfollow alias");
         }
         validateAuthenticatedRequest(request);
     }

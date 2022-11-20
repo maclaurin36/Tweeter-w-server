@@ -1,5 +1,7 @@
 package edu.byu.cs.tweeter.server.dao;
 
+import java.util.List;
+
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.server.dao.dto.FullUser;
 
@@ -8,6 +10,9 @@ public interface UserDao {
     Boolean deleteAuthToken(AuthToken authToken);
     void insertAuthToken(String alias, AuthToken authToken);
     void insertUser(FullUser user);
-    Integer incrementFollowerCount(String userAlias);
-    Integer incrementFollowingCount(String userAlias);
+    void incrementFollowerCount(String userAlias);
+    void incrementFollowingCount(String userAlias);
+    void decrementFollowerCount(String userAlias);
+    void decrementFollowingCount(String userAlias);
+    List<FullUser> batchGetUser(List<String> aliases);
 }

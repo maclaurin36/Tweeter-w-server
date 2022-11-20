@@ -4,10 +4,12 @@ import android.os.Handler;
 
 import java.io.IOException;
 
+import edu.byu.cs.tweeter.client.cache.Cache;
 import edu.byu.cs.tweeter.client.model.service.FollowService;
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
+import edu.byu.cs.tweeter.model.net.request.FollowUnfollowRequest;
 import edu.byu.cs.tweeter.model.net.request.UserRequest;
 import edu.byu.cs.tweeter.model.net.response.Response;
 
@@ -28,8 +30,9 @@ public class UnfollowTask extends AuthenticatedTask {
 
     @Override
     protected void runTask() throws IOException, TweeterRemoteException {
-        UserRequest userRequest = new UserRequest(authToken, followee.getAlias());
-        Response followResponse = getServerFacade().followUnfollow(userRequest, FollowService.UNFOLLOW_URL_PATH);
+        String curUserAlias = Cache.getInstance().getCurrUser().getAlias();
+        FollowUnfollowRequest unfollowRequest = new FollowUnfollowRequest(authToken, curUserAlias, followee.getAlias());
+        Response followResponse = getServerFacade().followUnfollow(unfollowRequest, FollowService.UNFOLLOW_URL_PATH);
         if (followResponse.isSuccess()) {
             sendSuccessMessage();
         } else {

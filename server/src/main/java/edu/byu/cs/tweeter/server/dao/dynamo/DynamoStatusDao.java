@@ -1,5 +1,6 @@
 package edu.byu.cs.tweeter.server.dao.dynamo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.byu.cs.tweeter.model.domain.Status;
@@ -14,16 +15,18 @@ public class DynamoStatusDao implements StatusDao {
 
     @Override
     public StatusPagedResponse getFeed(PagedRequest<Status> request) {
-        FakeData fakeData = FakeData.getInstance();
-        Pair<List<Status>, Boolean> statusResults = fakeData.getPageOfStatus(request.getLastItem(), request.getLimit());
-        return new StatusPagedResponse(true, statusResults.getSecond(), statusResults.getFirst());
+        return new StatusPagedResponse(true, true, new ArrayList<>());
+//        FakeData fakeData = FakeData.getInstance();
+//        Pair<List<Status>, Boolean> statusResults = fakeData.getPageOfStatus(request.getLastItem(), request.getLimit());
+//        return new StatusPagedResponse(true, statusResults.getSecond(), statusResults.getFirst());
     }
 
     @Override
     public StatusPagedResponse getStory(PagedRequest<Status> request) {
-        FakeData fakeData = FakeData.getInstance();
-        Pair<List<Status>, Boolean> statusResults = fakeData.getPageOfStatus(request.getLastItem(), request.getLimit());
-        return new StatusPagedResponse(true, statusResults.getSecond(), statusResults.getFirst());
+        return new StatusPagedResponse(true, true, new ArrayList<>());
+//        FakeData fakeData = FakeData.getInstance();
+//        Pair<List<Status>, Boolean> statusResults = fakeData.getPageOfStatus(request.getLastItem(), request.getLimit());
+//        return new StatusPagedResponse(true, statusResults.getSecond(), statusResults.getFirst());
     }
 
     @Override

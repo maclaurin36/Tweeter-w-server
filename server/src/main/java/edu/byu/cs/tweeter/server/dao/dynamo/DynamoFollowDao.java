@@ -1,10 +1,15 @@
 package edu.byu.cs.tweeter.server.dao.dynamo;
 
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import edu.byu.cs.tweeter.model.domain.User;
+import edu.byu.cs.tweeter.model.net.request.FollowUnfollowRequest;
 import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.model.net.request.PagedRequest;
 import edu.byu.cs.tweeter.model.net.request.UserRequest;
@@ -15,9 +20,13 @@ import edu.byu.cs.tweeter.util.FakeData;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 /**
  * A DAO for accessing 'following' data from the database.
@@ -31,7 +40,7 @@ public class DynamoFollowDao extends BaseDynamoDao implements FollowDao {
     private static final String INDEX_PARTITION_KEY = "followee_handle";
     private static final String INDEX_SORT_KEY = "follower_handle";
 
-    private static final DynamoDbTable<Follows> table = enhancedClient.table(TABLE_NAME, TableSchema.fromBean(Follows.class));
+    private static final DynamoDbTable<Follows> followTable = enhancedClient.table(TABLE_NAME, TableSchema.fromBean(Follows.class));
 
     public DynamoFollowDao() {}
 
@@ -110,68 +119,104 @@ public class DynamoFollowDao extends BaseDynamoDao implements FollowDao {
     }
 
     @Override
-    public Boolean insertFollower(UserRequest userRequest) {
+    public Boolean insertFollower(String userToBeFollowedAlias, String userToFollowAlias) {
+        Follows follows = new Follows(userToBeFollowedAlias, userToFollowAlias);
+        followTable.putItem(follows);
         return true;
     }
 
     @Override
-    public Boolean deleteFollower(UserRequest userRequest) {
+    public Boolean deleteFollower(String userThatWasFollowed, String userThatIsNoLongerFollowing) {
+        Key key = Key.builder().partitionValue(userThatWasFollowed).sortValue(userThatIsNoLongerFollowing).build();
+        followTable.deleteItem(key);
         return true;
     }
 
     @Override
     public UserPagedResponse getFollowers(PagedRequest<String> request) {
+        return new UserPagedResponse(true, false, new ArrayList<>());
         // TODO: Generates dummy data. Replace with a real implementation.
-        assert request.getLimit() > 0;
-        assert request.getAlias() != null;
-
-        List<User> allFollowees = getDummyFollowers();
-        List<User> responseFollowees = new ArrayList<>(request.getLimit());
-
-        boolean hasMorePages = false;
-
-        if(request.getLimit() > 0) {
-            if (allFollowees != null) {
-                int followeesIndex = getFollowersStartIndex(request.getLastItem(), allFollowees);
-
-                for(int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
-                    responseFollowees.add(allFollowees.get(followeesIndex));
-                }
-
-                hasMorePages = followeesIndex < allFollowees.size();
-            }
-        }
-
-        return new UserPagedResponse(true, hasMorePages, responseFollowees);
+//        assert request.getLimit() > 0;
+//        assert request.getAlias() != null;
+//
+//        List<User> allFollowees = getDummyFollowers();
+//        List<User> responseFollowees = new ArrayList<>(request.getLimit());
+//
+//        boolean hasMorePages = false;
+//
+//        if(request.getLimit() > 0) {
+//            if (allFollowees != null) {
+//                int followeesIndex = getFollowersStartIndex(request.getLastItem(), allFollowees);
+//
+//                for(int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
+//                    responseFollowees.add(allFollowees.get(followeesIndex));
+//                }
+//
+//                hasMorePages = followeesIndex < allFollowees.size();
+//            }
+//        }
+//
+//        return new UserPagedResponse(true, hasMorePages, responseFollowees);
     }
 
     @Override
-    public UserPagedResponse getFollowing(PagedRequest<String> request) {
-        assert request.getLimit() > 0;
-        assert request.getAlias() != null;
+    public List<String> getFollowing(PagedRequest<String> request) {
+        Key key = Key.builder()
+                .partitionValue(request.getAlias())
+                .build();
 
-        List<User> allFollowees = getDummyFollowees();
-        List<User> responseFollowees = new ArrayList<>(request.getLimit());
+        QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
+                .queryConditional(QueryConditional.keyEqualTo(key))
+                .scanIndexForward(true);
 
-        boolean hasMorePages = false;
+        if (request.getLastItem() != null && !request.getLastItem().equals("")) {
+            Map<String, AttributeValue> startKey = new HashMap<>();
+            startKey.put(PARTITION_KEY, AttributeValue.builder().s(request.getAlias()).build());
+            startKey.put(SORT_KEY, AttributeValue.builder().s(request.getLastItem()).build());
 
-        if(request.getLimit() > 0) {
-            if (allFollowees != null) {
-                int followeesIndex = getFolloweesStartingIndex(request.getLastItem(), allFollowees);
-
-                for(int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
-                    responseFollowees.add(allFollowees.get(followeesIndex));
-                }
-
-                hasMorePages = followeesIndex < allFollowees.size();
-            }
+            requestBuilder.exclusiveStartKey(startKey);
         }
 
-        return new UserPagedResponse(true, hasMorePages, responseFollowees);
+        QueryEnhancedRequest query = requestBuilder.build();
+
+        List<Follows> follows = followTable.query(query)
+                .items()
+                .stream()
+                .limit(request.getLimit())
+                .collect(Collectors.toList());
+
+        List<String> following = new ArrayList<>();
+        for (Follows follow : follows) {
+            following.add(follow.getFollowee_handle());
+        }
+        return following;
+//        assert request.getLimit() > 0;
+//        assert request.getAlias() != null;
+//
+//        List<User> allFollowees = getDummyFollowees();
+//        List<User> responseFollowees = new ArrayList<>(request.getLimit());
+//
+//        boolean hasMorePages = false;
+//
+//        if(request.getLimit() > 0) {
+//            if (allFollowees != null) {
+//                int followeesIndex = getFolloweesStartingIndex(request.getLastItem(), allFollowees);
+//
+//                for(int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
+//                    responseFollowees.add(allFollowees.get(followeesIndex));
+//                }
+//
+//                hasMorePages = followeesIndex < allFollowees.size();
+//            }
+//        }
+//
+//        return new UserPagedResponse(true, hasMorePages, responseFollowees);
     }
 
     @Override
     public Boolean checkFollows(IsFollowerRequest userRequest) {
-        return new Random().nextInt() > 0;
+        Key key = Key.builder().partitionValue(userRequest.getFollowerAlias()).sortValue(userRequest.getFolloweeAlias()).build();
+        Follows follows = followTable.getItem(key);
+        return follows != null;
     }
 }

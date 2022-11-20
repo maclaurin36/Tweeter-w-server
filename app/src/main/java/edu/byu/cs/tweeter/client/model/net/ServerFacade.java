@@ -6,6 +6,7 @@ import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.TweeterRemoteException;
 import edu.byu.cs.tweeter.model.net.request.AuthenticatedRequest;
+import edu.byu.cs.tweeter.model.net.request.FollowUnfollowRequest;
 import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
 import edu.byu.cs.tweeter.model.net.request.LoginRequest;
 import edu.byu.cs.tweeter.model.net.request.PagedRequest;
@@ -62,7 +63,7 @@ public class ServerFacade {
         return clientCommunicator.doPost(urlPath, request, null, StatusPagedResponse.class);
     }
 
-    public Response followUnfollow(UserRequest request, String urlPath) throws IOException, TweeterRemoteException {
+    public Response followUnfollow(FollowUnfollowRequest request, String urlPath) throws IOException, TweeterRemoteException {
         return clientCommunicator.doPost(urlPath, request, null, Response.class);
     }
 
