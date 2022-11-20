@@ -56,8 +56,8 @@ public class UserService extends BaseService {
 
     public Response logout(AuthenticatedRequest request) {
         RequestValidator.validateAuthenticatedRequest(request);
-
-        return new Response(daoFactory.getUserDao().invalidateAuthToken(request.getAuthToken()));
+        Boolean deleteSucceeded = daoFactory.getUserDao().deleteAuthToken(request.getAuthToken());
+        return new Response(deleteSucceeded);
     }
 
     public AuthenticateResponse register(RegisterRequest request) {
