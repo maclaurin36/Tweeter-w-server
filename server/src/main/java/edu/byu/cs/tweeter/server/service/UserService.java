@@ -18,6 +18,8 @@ import edu.byu.cs.tweeter.server.service.utility.HashUtility;
 
 public class UserService extends BaseService {
 
+    private final Integer initialFollowerCount = 0;
+    private final Integer initialFollowingCount = 0;
     public UserService(DaoFactory daoFactory) {
         super(daoFactory);
     }
@@ -73,7 +75,7 @@ public class UserService extends BaseService {
         catch (Exception ex) {
             throw new RuntimeException("[Bad Request] Password hashing failed", ex);
         }
-        FullUser fullUser = new FullUser(password, user.getFirstName(), user.getLastName(), user.getAlias(), imageUrl);
+        FullUser fullUser = new FullUser(password, user.getFirstName(), user.getLastName(), user.getAlias(), imageUrl, initialFollowerCount, initialFollowingCount);
         daoFactory.getUserDao().insertUser(fullUser);
         daoFactory.getUserDao().insertAuthToken(user.getAlias(), authToken);
         return new AuthenticateResponse(user, authToken);

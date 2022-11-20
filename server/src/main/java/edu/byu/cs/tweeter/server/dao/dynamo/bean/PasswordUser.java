@@ -11,6 +11,8 @@ public class PasswordUser {
     private String user_handle;
     private String imageUrl;
     private String password;
+    private Integer followerCount;
+    private Integer followingCount;
 
     public PasswordUser() { }
     public PasswordUser(FullUser fullUser) {
@@ -19,6 +21,8 @@ public class PasswordUser {
         this.user_handle = fullUser.getAlias();
         this.imageUrl = fullUser.getImageUrl();
         this.password = fullUser.getPassword();
+        this.followerCount = fullUser.getFollowerCount();
+        this.followingCount = fullUser.getFollowingCount();
     }
 
     @DynamoDbPartitionKey
@@ -60,5 +64,21 @@ public class PasswordUser {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Integer getFollowerCount() {
+        return followerCount;
+    }
+
+    public void setFollowerCount(Integer followerCount) {
+        this.followerCount = followerCount;
+    }
+
+    public Integer getFollowingCount() {
+        return followingCount;
+    }
+
+    public void setFollowingCount(Integer followingCount) {
+        this.followingCount = followingCount;
     }
 }
