@@ -31,7 +31,7 @@ public class Follows {
     public Follows() {}
 
     public Follows(String userToBeFollowedAlias, String userToFollowAlias) {
-        this.follower_handle = userToBeFollowedAlias;
-        this.followee_handle = userToFollowAlias;
+        this.followee_handle = userToBeFollowedAlias;
+        this.follower_handle = userToFollowAlias;
     }
 }

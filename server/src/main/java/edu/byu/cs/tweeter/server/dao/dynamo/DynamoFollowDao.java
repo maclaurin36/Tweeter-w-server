@@ -18,10 +18,14 @@ import edu.byu.cs.tweeter.server.dao.FollowDao;
 import edu.byu.cs.tweeter.server.dao.dynamo.bean.Follows;
 import edu.byu.cs.tweeter.util.FakeData;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+import software.amazon.awssdk.core.pagination.sync.SdkIterable;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbIndex;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.Page;
+import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 import software.amazon.awssdk.regions.Region;
@@ -127,36 +131,43 @@ public class DynamoFollowDao extends BaseDynamoDao implements FollowDao {
 
     @Override
     public Boolean deleteFollower(String userThatWasFollowed, String userThatIsNoLongerFollowing) {
-        Key key = Key.builder().partitionValue(userThatWasFollowed).sortValue(userThatIsNoLongerFollowing).build();
+        Key key = Key.builder().partitionValue(userThatIsNoLongerFollowing).sortValue(userThatWasFollowed).build();
         followTable.deleteItem(key);
         return true;
     }
 
     @Override
-    public UserPagedResponse getFollowers(PagedRequest<String> request) {
-        return new UserPagedResponse(true, false, new ArrayList<>());
-        // TODO: Generates dummy data. Replace with a real implementation.
-//        assert request.getLimit() > 0;
-//        assert request.getAlias() != null;
-//
-//        List<User> allFollowees = getDummyFollowers();
-//        List<User> responseFollowees = new ArrayList<>(request.getLimit());
-//
-//        boolean hasMorePages = false;
-//
-//        if(request.getLimit() > 0) {
-//            if (allFollowees != null) {
-//                int followeesIndex = getFollowersStartIndex(request.getLastItem(), allFollowees);
-//
-//                for(int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
-//                    responseFollowees.add(allFollowees.get(followeesIndex));
-//                }
-//
-//                hasMorePages = followeesIndex < allFollowees.size();
-//            }
-//        }
-//
-//        return new UserPagedResponse(true, hasMorePages, responseFollowees);
+    public List<String> getFollowers(PagedRequest<String> request) {
+        DynamoDbIndex<Follows> index = followTable.index(INDEX_NAME);
+        Key key = Key.builder()
+                .partitionValue(request.getAlias())
+                .build();
+
+        QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
+                .queryConditional(QueryConditional.keyEqualTo(key))
+                .limit(request.getLimit())
+                .scanIndexForward(false);
+
+        if(request.getLastItem() != null && !request.getLastItem().equals("")) {
+            Map<String, AttributeValue> startKey = new HashMap<>();
+            startKey.put(INDEX_PARTITION_KEY, AttributeValue.builder().s(request.getAlias()).build());
+            startKey.put(INDEX_SORT_KEY, AttributeValue.builder().s(request.getLastItem()).build());
+
+            requestBuilder.exclusiveStartKey(startKey);
+        }
+
+        QueryEnhancedRequest query = requestBuilder.build();
+
+        List<Follows> followerList = new ArrayList<>();
+
+        SdkIterable<Page<Follows>> indexResults = index.query(query);
+        PageIterable<Follows> pages = PageIterable.create(indexResults);
+        pages.stream()
+                .limit(1)
+                .forEach(followerPage -> followerList.addAll(followerPage.items()));
+
+        List<String> aliases = followerList.stream().map(Follows::getFollower_handle).collect(Collectors.toList());
+        return aliases;
     }
 
     @Override
@@ -190,27 +201,6 @@ public class DynamoFollowDao extends BaseDynamoDao implements FollowDao {
             following.add(follow.getFollowee_handle());
         }
         return following;
-//        assert request.getLimit() > 0;
-//        assert request.getAlias() != null;
-//
-//        List<User> allFollowees = getDummyFollowees();
-//        List<User> responseFollowees = new ArrayList<>(request.getLimit());
-//
-//        boolean hasMorePages = false;
-//
-//        if(request.getLimit() > 0) {
-//            if (allFollowees != null) {
-//                int followeesIndex = getFolloweesStartingIndex(request.getLastItem(), allFollowees);
-//
-//                for(int limitCounter = 0; followeesIndex < allFollowees.size() && limitCounter < request.getLimit(); followeesIndex++, limitCounter++) {
-//                    responseFollowees.add(allFollowees.get(followeesIndex));
-//                }
-//
-//                hasMorePages = followeesIndex < allFollowees.size();
-//            }
-//        }
-//
-//        return new UserPagedResponse(true, hasMorePages, responseFollowees);
     }
 
     @Override

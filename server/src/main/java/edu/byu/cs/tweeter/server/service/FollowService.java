@@ -43,7 +43,13 @@ public class FollowService extends BaseService {
 
     public PagedResponse<User> getFollowers(PagedRequest<String> request) {
         RequestValidator.validatePagedRequest(request);
-        return daoFactory.getFollowDao().getFollowers(request);
+        List<String> aliases = daoFactory.getFollowDao().getFollowers(request);
+        for (String alias : aliases) {
+            System.out.println(alias);
+        }
+        List<FullUser> fullUsers = daoFactory.getUserDao().batchGetUser(aliases);
+        List<User> users = fullUsers.stream().map(fullUser -> new User(fullUser.getFirstName(), fullUser.getLastName(), fullUser.getAlias(), fullUser.getImageUrl())).collect(Collectors.toList());
+        return new PagedResponse<>(true, !(users.size() < request.getLimit()), users);
     }
 
     public PagedResponse<User> getFollowing(PagedRequest<String> request) {

@@ -12,7 +12,7 @@ public interface FollowDao {
     Boolean insertFollower(String userToBeFollowedAlias, String userToFollowAlias);
     Boolean deleteFollower(String userThatWasFollowed, String userNoLongerFollowing);
 
-    UserPagedResponse getFollowers(PagedRequest<String> request);
+    List<String> getFollowers(PagedRequest<String> request);
     List<String> getFollowing(PagedRequest<String> request);
 
     Boolean checkFollows(IsFollowerRequest userRequest);
