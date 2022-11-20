@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.server.service;
+package edu.byu.cs.tweeter.server.service.utility;
 
 import edu.byu.cs.tweeter.model.net.request.AuthenticatedRequest;
 import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;

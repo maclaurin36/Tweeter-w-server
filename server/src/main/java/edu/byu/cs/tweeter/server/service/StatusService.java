@@ -6,6 +6,7 @@ import edu.byu.cs.tweeter.model.net.request.PostStatusRequest;
 import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 import edu.byu.cs.tweeter.model.net.response.Response;
 import edu.byu.cs.tweeter.server.dao.DaoFactory;
+import edu.byu.cs.tweeter.server.service.utility.RequestValidator;
 
 public class StatusService extends BaseService {
 

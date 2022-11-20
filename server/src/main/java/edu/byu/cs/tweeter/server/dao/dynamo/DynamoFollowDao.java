@@ -171,16 +171,6 @@ public class DynamoFollowDao extends BaseDynamoDao implements FollowDao {
     }
 
     @Override
-    public int getFollowerCount(UserRequest request) {
-        return getDummyFollowees().size();
-    }
-
-    @Override
-    public int getFollowingCount(UserRequest request) {
-        return getDummyFollowees().size();
-    }
-
-    @Override
     public Boolean checkFollows(IsFollowerRequest userRequest) {
         return new Random().nextInt() > 0;
     }

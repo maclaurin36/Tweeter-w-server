@@ -9,6 +9,8 @@ import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 import edu.byu.cs.tweeter.model.net.response.Response;
 import edu.byu.cs.tweeter.server.dao.DaoFactory;
+import edu.byu.cs.tweeter.server.dao.dto.FullUser;
+import edu.byu.cs.tweeter.server.service.utility.RequestValidator;
 
 /**
  * Contains the business logic for getting the users a user is following.
@@ -23,6 +25,10 @@ public class FollowService extends BaseService {
         RequestValidator.validateUserRequest(request);
         Boolean insertSucceeded = daoFactory.getFollowDao().insertFollower(request);
         return new Response(insertSucceeded);
+
+        // Insert into the follows table (both as a follower and as a followee)
+        // Increment the follower count of the user with that request alias
+        // Increment the following count of the user with
     }
 
     public Response unfollow(UserRequest request) {
@@ -43,13 +49,15 @@ public class FollowService extends BaseService {
 
     public CountResponse getFollowerCount(UserRequest request) {
         RequestValidator.validateUserRequest(request);
-        int count = daoFactory.getFollowDao().getFollowingCount(request);
+        FullUser user = daoFactory.getUserDao().getUser(request.getAlias());
+        int count = user.getFollowerCount();
         return new CountResponse(count);
     }
 
     public CountResponse getFollowingCount(UserRequest request) {
         RequestValidator.validateUserRequest(request);
-        int count = daoFactory.getFollowDao().getFollowerCount(request);
+        FullUser user = daoFactory.getUserDao().getUser(request.getAlias());
+        int count = user.getFollowingCount();
         return new CountResponse(count);
     }
 

@@ -12,8 +12,5 @@ public interface FollowDao {
     UserPagedResponse getFollowers(PagedRequest<String> request);
     UserPagedResponse getFollowing(PagedRequest<String> request);
 
-    int getFollowerCount(UserRequest request);
-    int getFollowingCount(UserRequest request);
-
     Boolean checkFollows(IsFollowerRequest userRequest);
 }

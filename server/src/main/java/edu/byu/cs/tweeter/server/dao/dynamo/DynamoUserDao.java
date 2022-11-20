@@ -9,6 +9,8 @@ import edu.byu.cs.tweeter.server.dao.dynamo.bean.PasswordUser;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.UpdateItemEnhancedRequest;
+import software.amazon.awssdk.enhanced.dynamodb.model.UpdateItemEnhancedResponse;
 
 public class DynamoUserDao extends BaseDynamoDao implements UserDao {
 
@@ -53,4 +55,28 @@ public class DynamoUserDao extends BaseDynamoDao implements UserDao {
         PasswordUser passwordUser = new PasswordUser(user);
         userTable.putItem(passwordUser);
     }
+
+    @Override
+    public Integer incrementFollowerCount(String userAlias) {
+        FullUser user = getUser(userAlias);
+        Integer newFollowerCount = user.getFollowerCount() + 1;
+        user.setFollowerCount(newFollowerCount);
+        PasswordUser passwordUser = new PasswordUser(user);
+        UpdateItemEnhancedRequest<PasswordUser> request = UpdateItemEnhancedRequest.builder(PasswordUser.class).item(passwordUser).build();
+        userTable.updateItem(request);
+        return newFollowerCount;
+    }
+
+    @Override
+    public Integer incrementFollowingCount(String userAlias) {
+        FullUser user = getUser(userAlias);
+        Integer newFollowingCount = user.getFollowingCount() + 1;
+        user.setFollowingCount(newFollowingCount);
+        PasswordUser passwordUser = new PasswordUser(user);
+        UpdateItemEnhancedRequest<PasswordUser> request = UpdateItemEnhancedRequest.builder(PasswordUser.class).item(passwordUser).build();
+        userTable.updateItem(request);
+        return newFollowingCount;
+    }
+
+
 }

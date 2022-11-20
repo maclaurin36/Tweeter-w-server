@@ -15,6 +15,7 @@ import edu.byu.cs.tweeter.model.net.response.UserResponse;
 import edu.byu.cs.tweeter.server.dao.DaoFactory;
 import edu.byu.cs.tweeter.server.dao.dto.FullUser;
 import edu.byu.cs.tweeter.server.service.utility.HashUtility;
+import edu.byu.cs.tweeter.server.service.utility.RequestValidator;
 
 public class UserService extends BaseService {
 

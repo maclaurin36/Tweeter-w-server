@@ -8,4 +8,6 @@ public interface UserDao {
     Boolean deleteAuthToken(AuthToken authToken);
     void insertAuthToken(String alias, AuthToken authToken);
     void insertUser(FullUser user);
+    Integer incrementFollowerCount(String userAlias);
+    Integer incrementFollowingCount(String userAlias);
 }
