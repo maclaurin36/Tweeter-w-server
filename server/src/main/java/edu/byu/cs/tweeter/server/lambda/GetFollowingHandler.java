@@ -7,7 +7,7 @@ import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.PagedRequest;
 import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 import edu.byu.cs.tweeter.server.dao.DaoFactory;
-import edu.byu.cs.tweeter.server.dao.dynamo.DynamoDaoFactory;
+import edu.byu.cs.tweeter.server.dao.AwsDaoFactory;
 import edu.byu.cs.tweeter.server.service.FollowService;
 
 /**
@@ -26,7 +26,7 @@ public class GetFollowingHandler implements RequestHandler<PagedRequest<String>,
      */
     @Override
     public PagedResponse<User> handleRequest(PagedRequest<String> request, Context context) {
-        DaoFactory daoFactory = new DynamoDaoFactory();
+        DaoFactory daoFactory = new AwsDaoFactory();
         FollowService service = new FollowService(daoFactory);
         return service.getFollowing(request);
     }

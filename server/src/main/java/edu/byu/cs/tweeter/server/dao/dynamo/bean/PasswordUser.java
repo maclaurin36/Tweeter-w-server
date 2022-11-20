@@ -1,5 +1,6 @@
 package edu.byu.cs.tweeter.server.dao.dynamo.bean;
 
+import edu.byu.cs.tweeter.server.dao.dto.FullUser;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 
@@ -10,6 +11,15 @@ public class PasswordUser {
     private String user_handle;
     private String imageUrl;
     private String password;
+
+    public PasswordUser() { }
+    public PasswordUser(FullUser fullUser) {
+        this.firstName = fullUser.getFirstName();
+        this.lastName = fullUser.getLastName();
+        this.user_handle = fullUser.getAlias();
+        this.imageUrl = fullUser.getImageUrl();
+        this.password = fullUser.getPassword();
+    }
 
     @DynamoDbPartitionKey
     public String getUser_handle() {

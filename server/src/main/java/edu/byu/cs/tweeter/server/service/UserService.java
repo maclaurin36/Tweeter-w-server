@@ -14,7 +14,7 @@ import edu.byu.cs.tweeter.model.net.response.Response;
 import edu.byu.cs.tweeter.model.net.response.UserResponse;
 import edu.byu.cs.tweeter.server.dao.DaoFactory;
 import edu.byu.cs.tweeter.server.dao.dto.FullUser;
-import edu.byu.cs.tweeter.server.dao.dynamo.bean.Authentication;
+import edu.byu.cs.tweeter.server.service.utility.HashUtility;
 
 public class UserService extends BaseService {
 
@@ -31,8 +31,13 @@ public class UserService extends BaseService {
             throw new RuntimeException("[Bad Request] User with given alias not found");
         }
 
-        if (!userWithPassword.getPassword().equals(request.getPassword())) {
-            throw new RuntimeException("[Unauthorized] Given password did not match password in the database");
+        try {
+            if (!HashUtility.validatePassword(request.getPassword(), userWithPassword.getPassword())) {
+                throw new RuntimeException("[Unauthorized] Given password did not match password in the database");
+            }
+        }
+        catch (Exception ex) {
+            throw new RuntimeException("[Bad Request] Invalid password specified", ex);
         }
 
         AuthToken authToken = new AuthToken(UUID.randomUUID().toString(), new Date().getTime());
@@ -57,6 +62,20 @@ public class UserService extends BaseService {
 
     public AuthenticateResponse register(RegisterRequest request) {
         RequestValidator.validateRegisterRequest(request);
-        return daoFactory.getUserDao().register(request);
+        String imageUrl = daoFactory.getImageDao().storeImage(request.getImage());
+        User user = new User(request.getFirstname(), request.getLastname(), request.getAlias(), imageUrl);
+        AuthToken authToken = new AuthToken(UUID.randomUUID().toString(), new Date().getTime());
+
+        String password;
+        try {
+            password = HashUtility.generateStrongPasswordHash(request.getPassword());
+        }
+        catch (Exception ex) {
+            throw new RuntimeException("[Bad Request] Password hashing failed", ex);
+        }
+        FullUser fullUser = new FullUser(password, user.getFirstName(), user.getLastName(), user.getAlias(), imageUrl);
+        daoFactory.getUserDao().insertUser(fullUser);
+        daoFactory.getUserDao().insertAuthToken(user.getAlias(), authToken);
+        return new AuthenticateResponse(user, authToken);
     }
 }

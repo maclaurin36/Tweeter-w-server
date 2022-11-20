@@ -54,6 +54,12 @@ public class DynamoUserDao extends BaseDynamoDao implements UserDao {
     }
 
     @Override
+    public void insertUser(FullUser user) {
+        PasswordUser passwordUser = new PasswordUser(user);
+        userTable.putItem(passwordUser);
+    }
+
+    @Override
     public AuthenticateResponse register(RegisterRequest request) {
         return new AuthenticateResponse(FakeData.getInstance().getFirstUser(), FakeData.getInstance().getAuthToken());
     }

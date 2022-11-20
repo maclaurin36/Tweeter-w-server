@@ -4,4 +4,5 @@ public interface DaoFactory {
     UserDao getUserDao();
     FollowDao getFollowDao();
     StatusDao getStatusDao();
+    ImageDao getImageDao();
 }

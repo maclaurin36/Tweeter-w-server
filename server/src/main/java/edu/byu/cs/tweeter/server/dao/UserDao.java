@@ -12,6 +12,7 @@ public interface UserDao {
     FullUser getUser(String alias);
     Boolean invalidateAuthToken(AuthToken authToken);
     Boolean insertAuthToken(String alias, AuthToken authToken);
+    void insertUser(FullUser user);
 
     AuthenticateResponse register(RegisterRequest request);
 }
