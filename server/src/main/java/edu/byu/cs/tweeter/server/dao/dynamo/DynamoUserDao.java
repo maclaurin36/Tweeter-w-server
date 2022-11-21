@@ -44,12 +44,28 @@ public class DynamoUserDao extends BaseDynamoDao implements UserDao {
 
     @Override
     public Boolean deleteAuthToken(AuthToken authToken) {
-        AuthToken newestToken = getAuthToken(authToken);
         Key key = Key.builder()
-                .partitionValue(newestToken.getToken())
-                .sortValue(newestToken.getExpiration())
+                .partitionValue(authToken.getToken())
                 .build();
-        authTable.deleteItem(key);
+
+        QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
+                .queryConditional(QueryConditional.keyEqualTo(key))
+                .scanIndexForward(false);
+
+        QueryEnhancedRequest request = requestBuilder.build();
+
+        List<Authentication> authenticationList = authTable.query(request)
+                .items()
+                .stream()
+                .collect(Collectors.toList());
+
+        for (Authentication auth : authenticationList) {
+            Key deleteKey = Key.builder()
+                    .partitionValue(auth.getToken())
+                    .sortValue(auth.getExpiration())
+                    .build();
+            authTable.deleteItem(deleteKey);
+        }
         return true;
     }
 
@@ -61,7 +77,7 @@ public class DynamoUserDao extends BaseDynamoDao implements UserDao {
 
         QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
                 .queryConditional(QueryConditional.keyEqualTo(key))
-                .scanIndexForward(true);
+                .scanIndexForward(false);
 
         QueryEnhancedRequest request = requestBuilder.build();
 
@@ -85,61 +101,13 @@ public class DynamoUserDao extends BaseDynamoDao implements UserDao {
     }
 
     @Override
-    public void updateAuthToken(AuthToken authToken) {
-        Authentication authentication = new Authentication(authToken);
-        authTable.updateItem(authentication);
-    }
-
-    @Override
     public void insertUser(FullUser user) {
         PasswordUser passwordUser = new PasswordUser(user);
         userTable.putItem(passwordUser);
     }
 
-    // TODO reduce duplication
-    @Override
-    public void incrementFollowerCount(String userAlias) {
-        FullUser user = getUser(userAlias);
-        Integer newFollowerCount = user.getFollowerCount() + 1;
-        user.setFollowerCount(newFollowerCount);
-        PasswordUser passwordUser = new PasswordUser(user);
-        UpdateItemEnhancedRequest<PasswordUser> request = UpdateItemEnhancedRequest.builder(PasswordUser.class).item(passwordUser).build();
-        userTable.updateItem(request);
-    }
-
-    @Override
-    public void incrementFollowingCount(String userAlias) {
-        FullUser user = getUser(userAlias);
-        Integer newFollowingCount = user.getFollowingCount() + 1;
-        user.setFollowingCount(newFollowingCount);
-        PasswordUser passwordUser = new PasswordUser(user);
-        UpdateItemEnhancedRequest<PasswordUser> request = UpdateItemEnhancedRequest.builder(PasswordUser.class).item(passwordUser).build();
-        userTable.updateItem(request);
-    }
-
-    @Override
-    public void decrementFollowerCount(String userAlias) {
-        FullUser user = getUser(userAlias);
-        Integer newFollowerCount = user.getFollowerCount() - 1;
-        user.setFollowerCount(newFollowerCount);
-        PasswordUser passwordUser = new PasswordUser(user);
-        UpdateItemEnhancedRequest<PasswordUser> request = UpdateItemEnhancedRequest.builder(PasswordUser.class).item(passwordUser).build();
-        userTable.updateItem(request);
-    }
-
-    @Override
-    public void decrementFollowingCount(String userAlias) {
-        FullUser user = getUser(userAlias);
-        Integer newFollowingCount = user.getFollowingCount() - 1;
-        user.setFollowingCount(newFollowingCount);
-        PasswordUser passwordUser = new PasswordUser(user);
-        UpdateItemEnhancedRequest<PasswordUser> request = UpdateItemEnhancedRequest.builder(PasswordUser.class).item(passwordUser).build();
-        userTable.updateItem(request);
-    }
-
     @Override
     public List<FullUser> batchGetUser(List<String> aliases) {
-        List<Key> keys = new ArrayList<>();
         ReadBatch.Builder<PasswordUser> readBatchBuilder = ReadBatch.builder(PasswordUser.class);
         readBatchBuilder.mappedTableResource(userTable);
         for (String alias : aliases) {
@@ -152,6 +120,12 @@ public class DynamoUserDao extends BaseDynamoDao implements UserDao {
         List<FullUser> fullUsers = new ArrayList<>();
         users.forEach(user -> { fullUsers.add(new FullUser(user.getPassword(), user.getFirstName(), user.getLastName(), user.getUser_handle(), user.getImageUrl(), user.getFollowerCount(), user.getFollowingCount()));});
         return fullUsers;
+    }
+
+    @Override
+    public void updateUser(FullUser user) {
+        PasswordUser passwordUser = new PasswordUser(user);
+        userTable.updateItem(passwordUser);
     }
 
 

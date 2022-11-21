@@ -32,8 +32,12 @@ public class FollowService extends BaseService {
         FollowUnfollowRequestValidator followUnfollowRequestValidator = new FollowUnfollowRequestValidator(request, daoFactory.getUserDao());
         followUnfollowRequestValidator.validate();
         Boolean insertSucceeded = daoFactory.getFollowDao().insertFollower(request.getUserToFollowUnfollowAlias(), request.getUserAlias());
-        daoFactory.getUserDao().incrementFollowerCount(request.getUserToFollowUnfollowAlias());
-        daoFactory.getUserDao().incrementFollowingCount(request.getUserAlias());
+        FullUser userToFollowUnfollow = daoFactory.getUserDao().getUser(request.getUserToFollowUnfollowAlias());
+        userToFollowUnfollow.setFollowerCount(userToFollowUnfollow.getFollowerCount() + 1);
+        daoFactory.getUserDao().updateUser(userToFollowUnfollow);
+        FullUser requestUser = daoFactory.getUserDao().getUser(request.getUserAlias());
+        requestUser.setFollowingCount(requestUser.getFollowerCount() + 1);
+        daoFactory.getUserDao().updateUser(requestUser);
         return new Response(insertSucceeded);
     }
 
@@ -41,8 +45,13 @@ public class FollowService extends BaseService {
         FollowUnfollowRequestValidator followUnfollowRequestValidator = new FollowUnfollowRequestValidator(request, daoFactory.getUserDao());
         followUnfollowRequestValidator.validate();
         Boolean deleteSucceeded = daoFactory.getFollowDao().deleteFollower(request.getUserToFollowUnfollowAlias(), request.getUserAlias());
-        daoFactory.getUserDao().decrementFollowerCount(request.getUserToFollowUnfollowAlias());
-        daoFactory.getUserDao().decrementFollowingCount(request.getUserAlias());
+
+        FullUser userToFollowUnfollow = daoFactory.getUserDao().getUser(request.getUserToFollowUnfollowAlias());
+        userToFollowUnfollow.setFollowerCount(userToFollowUnfollow.getFollowerCount() - 1);
+        daoFactory.getUserDao().updateUser(userToFollowUnfollow);
+        FullUser requestUser = daoFactory.getUserDao().getUser(request.getUserAlias());
+        requestUser.setFollowingCount(requestUser.getFollowerCount() - 1);
+        daoFactory.getUserDao().updateUser(requestUser);
         return new Response(deleteSucceeded);
     }
 

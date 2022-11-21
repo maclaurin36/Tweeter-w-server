@@ -10,11 +10,7 @@ public interface UserDao {
     Boolean deleteAuthToken(AuthToken authToken);
     AuthToken getAuthToken(AuthToken authToken);
     void insertAuthToken(AuthToken authToken);
-    void updateAuthToken(AuthToken authToken);
     void insertUser(FullUser user);
-    void incrementFollowerCount(String userAlias);
-    void incrementFollowingCount(String userAlias);
-    void decrementFollowerCount(String userAlias);
-    void decrementFollowingCount(String userAlias);
     List<FullUser> batchGetUser(List<String> aliases);
+    void updateUser(FullUser user);
 }

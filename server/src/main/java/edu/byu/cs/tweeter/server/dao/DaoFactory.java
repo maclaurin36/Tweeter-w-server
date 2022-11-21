@@ -5,4 +5,6 @@ public interface DaoFactory {
     FollowDao getFollowDao();
     StatusDao getStatusDao();
     ImageDao getImageDao();
+    FeedDao getFeedDao();
+    StoryDao getStoryDao();
 }

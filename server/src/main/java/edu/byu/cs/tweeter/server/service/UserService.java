@@ -11,9 +11,8 @@ import edu.byu.cs.tweeter.model.net.response.Response;
 import edu.byu.cs.tweeter.model.net.response.UserResponse;
 import edu.byu.cs.tweeter.server.dao.DaoFactory;
 import edu.byu.cs.tweeter.server.dao.dto.FullUser;
-import edu.byu.cs.tweeter.server.service.utility.Authenticator;
+import edu.byu.cs.tweeter.server.service.utility.AuthTokenGenerator;
 import edu.byu.cs.tweeter.server.service.utility.HashUtility;
-import edu.byu.cs.tweeter.server.service.validator.AuthenticatedValidator;
 import edu.byu.cs.tweeter.server.service.validator.LoginValidator;
 import edu.byu.cs.tweeter.server.service.validator.RegisterRequestValidator;
 import edu.byu.cs.tweeter.server.service.validator.UserRequestValidator;
@@ -33,19 +32,19 @@ public class UserService extends BaseService {
         FullUser userWithPassword = daoFactory.getUserDao().getUser(request.getUsername());
 
         if (userWithPassword == null) {
-            throw new RuntimeException("[Bad Request] User with given alias not found");
+            return new AuthenticateResponse("Invalid alias");
         }
 
         try {
             if (!HashUtility.validatePassword(request.getPassword(), userWithPassword.getPassword())) {
-                throw new RuntimeException("[Unauthorized] Given password did not match password in the database");
+                return new AuthenticateResponse("Invalid password");
             }
         }
         catch (Exception ex) {
             throw new RuntimeException("[Bad Request] Invalid password specified", ex);
         }
 
-        AuthToken authToken = Authenticator.generateAuthToken();
+        AuthToken authToken = AuthTokenGenerator.generateAuthToken();
 
         daoFactory.getUserDao().insertAuthToken(authToken);
         User user = new User(userWithPassword.getFirstName(), userWithPassword.getLastName(), userWithPassword.getAlias(), userWithPassword.getImageUrl());
@@ -61,8 +60,6 @@ public class UserService extends BaseService {
     }
 
     public Response logout(AuthenticatedRequest request) {
-        AuthenticatedValidator authenticatedValidator = new AuthenticatedValidator(request, daoFactory.getUserDao());
-        authenticatedValidator.validate();
         Boolean deleteSucceeded = daoFactory.getUserDao().deleteAuthToken(request.getAuthToken());
         return new Response(deleteSucceeded);
     }
@@ -72,7 +69,7 @@ public class UserService extends BaseService {
         registerRequestValidator.validate();
         String imageUrl = daoFactory.getImageDao().storeImage(request.getImage());
         User user = new User(request.getFirstname(), request.getLastname(), request.getAlias(), imageUrl);
-        AuthToken authToken = Authenticator.generateAuthToken();
+        AuthToken authToken = AuthTokenGenerator.generateAuthToken();
 
         String password;
         try {
