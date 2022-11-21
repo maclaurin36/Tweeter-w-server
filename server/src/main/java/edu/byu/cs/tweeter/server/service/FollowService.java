@@ -43,7 +43,7 @@ public class FollowService extends BaseService {
 
     public PagedResponse<User> getFollowers(PagedRequest<String> request) {
         RequestValidator.validatePagedRequest(request);
-        List<String> aliases = daoFactory.getFollowDao().getFollowers(request);
+        List<String> aliases = daoFactory.getFollowDao().getFollowers(request.getAlias(), request.getLimit(), request.getLastItem());
         for (String alias : aliases) {
             System.out.println(alias);
         }

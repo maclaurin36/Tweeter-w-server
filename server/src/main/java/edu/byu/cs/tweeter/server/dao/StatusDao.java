@@ -9,6 +9,7 @@ import edu.byu.cs.tweeter.model.net.response.StatusPagedResponse;
 
 public interface StatusDao {
     List<Status> getFeed(PagedRequest<Status> request);
-    StatusPagedResponse getStory(PagedRequest<Status> request);
-    Boolean postStatus(PostStatusRequest request);
+    List<Status> getStory(PagedRequest<Status> request);
+    void insertStatusToStory(Status status);
+    void insertStatusToFeed(String feedAlias, Status status);
 }

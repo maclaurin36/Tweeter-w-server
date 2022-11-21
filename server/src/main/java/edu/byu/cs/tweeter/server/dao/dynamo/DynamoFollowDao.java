@@ -137,21 +137,21 @@ public class DynamoFollowDao extends BaseDynamoDao implements FollowDao {
     }
 
     @Override
-    public List<String> getFollowers(PagedRequest<String> request) {
+    public List<String> getFollowers(String alias, int limit, String lastItem) {
         DynamoDbIndex<Follows> index = followTable.index(INDEX_NAME);
         Key key = Key.builder()
-                .partitionValue(request.getAlias())
+                .partitionValue(alias)
                 .build();
 
         QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
                 .queryConditional(QueryConditional.keyEqualTo(key))
-                .limit(request.getLimit())
+                .limit(limit)
                 .scanIndexForward(false);
 
-        if(request.getLastItem() != null && !request.getLastItem().equals("")) {
+        if(lastItem != null && !lastItem.equals("")) {
             Map<String, AttributeValue> startKey = new HashMap<>();
-            startKey.put(INDEX_PARTITION_KEY, AttributeValue.builder().s(request.getAlias()).build());
-            startKey.put(INDEX_SORT_KEY, AttributeValue.builder().s(request.getLastItem()).build());
+            startKey.put(INDEX_PARTITION_KEY, AttributeValue.builder().s(alias).build());
+            startKey.put(INDEX_SORT_KEY, AttributeValue.builder().s(lastItem).build());
 
             requestBuilder.exclusiveStartKey(startKey);
         }

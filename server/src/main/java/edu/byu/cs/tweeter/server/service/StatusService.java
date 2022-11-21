@@ -25,12 +25,17 @@ public class StatusService extends BaseService {
 
     public PagedResponse<Status> getStory(PagedRequest<Status> request) {
         RequestValidator.validatePagedRequest(request);
-        return daoFactory.getStatusDao().getStory(request);
+        List<Status> storyPage = daoFactory.getStatusDao().getStory(request);
+        return new StatusPagedResponse(true, !(storyPage.size() < request.getLimit()), storyPage);
     }
 
     public Response postStatus(PostStatusRequest request) {
         RequestValidator.validatePostStatusRequest(request);
-        Boolean statusInserted = daoFactory.getStatusDao().postStatus(request);
-        return new Response(statusInserted);
+        daoFactory.getStatusDao().insertStatusToStory(request.getStatus());
+        List<String> followers = daoFactory.getFollowDao().getFollowers(request.getStatus().getUser().getAlias(), 100, null);
+        for (String follower : followers) {
+            daoFactory.getStatusDao().insertStatusToFeed(follower, request.getStatus());
+        }
+        return new Response(true);
     }
 }

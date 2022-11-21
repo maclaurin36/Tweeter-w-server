@@ -9,7 +9,7 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbParti
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
 
 @DynamoDbBean
-public class Feed {
+public class DynamoStatus {
     private String user_handle;
     private Long date_posted;
     private String post;
@@ -18,11 +18,12 @@ public class Feed {
     private String firstName;
     private String lastName;
     private String imageUrl;
+    private String alias;
 
-    public Feed() {}
+    public DynamoStatus() {}
 
-    public Feed(Status status) {
-        this.user_handle = status.getUser().getAlias();
+    public DynamoStatus(String alias, Status status) {
+        this.user_handle = alias;
         this.date_posted = DateUtility.getDateFromString(status.getDate());
         this.post = status.getPost();
         this.urls = status.getUrls();
@@ -30,6 +31,7 @@ public class Feed {
         this.firstName = status.getUser().getFirstName();
         this.lastName = status.getUser().getLastName();
         this.imageUrl = status.getUser().getImageUrl();
+        this.alias = status.getUser().getAlias();
     }
 
     @DynamoDbPartitionKey
@@ -96,5 +98,13 @@ public class Feed {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 }
