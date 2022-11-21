@@ -22,9 +22,7 @@ import software.amazon.awssdk.enhanced.dynamodb.model.UpdateItemEnhancedRequest;
 
 public class DynamoUserDao extends BaseDynamoDao implements UserDao {
 
-    private static final String AuthTableName = "authentication";
     private static final String UserTableName = "user";
-    private static final DynamoDbTable<Authentication> authTable = enhancedClient.table(AuthTableName, TableSchema.fromBean(Authentication.class));
     private static final DynamoDbTable<PasswordUser> userTable = enhancedClient.table(UserTableName, TableSchema.fromBean(PasswordUser.class));
 
     @Override
@@ -40,64 +38,6 @@ public class DynamoUserDao extends BaseDynamoDao implements UserDao {
         }
 
         return new FullUser(passwordUser.getPassword(), passwordUser.getFirstName(), passwordUser.getLastName(), passwordUser.getUser_handle(), passwordUser.getImageUrl(), passwordUser.getFollowerCount(), passwordUser.getFollowingCount());
-    }
-
-    @Override
-    public Boolean deleteAuthToken(AuthToken authToken) {
-        Key key = Key.builder()
-                .partitionValue(authToken.getToken())
-                .build();
-
-        QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
-                .queryConditional(QueryConditional.keyEqualTo(key))
-                .scanIndexForward(false);
-
-        QueryEnhancedRequest request = requestBuilder.build();
-
-        List<Authentication> authenticationList = authTable.query(request)
-                .items()
-                .stream()
-                .collect(Collectors.toList());
-
-        for (Authentication auth : authenticationList) {
-            Key deleteKey = Key.builder()
-                    .partitionValue(auth.getToken())
-                    .sortValue(auth.getExpiration())
-                    .build();
-            authTable.deleteItem(deleteKey);
-        }
-        return true;
-    }
-
-    @Override
-    public AuthToken getAuthToken(AuthToken authToken) {
-        Key key = Key.builder()
-                .partitionValue(authToken.getToken())
-                .build();
-
-        QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
-                .queryConditional(QueryConditional.keyEqualTo(key))
-                .scanIndexForward(false);
-
-        QueryEnhancedRequest request = requestBuilder.build();
-
-        List<Authentication> authenticationList = authTable.query(request)
-                .items()
-                .stream()
-                .limit(1)
-                .collect(Collectors.toList());
-
-        if (authenticationList.size() == 0) {
-            return null;
-        }
-
-        return new AuthToken(authenticationList.get(0).getToken(), authenticationList.get(0).getExpiration());
-    }
-
-    @Override
-    public void insertAuthToken(AuthToken authToken) {
-        Authentication authentication = new Authentication(authToken);
-        authTable.putItem(authentication);
     }
 
     @Override
@@ -127,6 +67,4 @@ public class DynamoUserDao extends BaseDynamoDao implements UserDao {
         PasswordUser passwordUser = new PasswordUser(user);
         userTable.updateItem(passwordUser);
     }
-
-
 }

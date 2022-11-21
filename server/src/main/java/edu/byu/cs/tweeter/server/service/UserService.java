@@ -46,13 +46,13 @@ public class UserService extends BaseService {
 
         AuthToken authToken = AuthTokenGenerator.generateAuthToken();
 
-        daoFactory.getUserDao().insertAuthToken(authToken);
+        daoFactory.getAuthDao().insertAuthToken(authToken);
         User user = new User(userWithPassword.getFirstName(), userWithPassword.getLastName(), userWithPassword.getAlias(), userWithPassword.getImageUrl());
         return new AuthenticateResponse(user, authToken);
     }
 
     public UserResponse getUser(UserRequest request) {
-        UserRequestValidator userRequestValidator = new UserRequestValidator(request, daoFactory.getUserDao());
+        UserRequestValidator userRequestValidator = new UserRequestValidator(request, daoFactory.getAuthDao());
         userRequestValidator.validate();
         FullUser fullUser = daoFactory.getUserDao().getUser(request.getAlias());
         User user = new User(fullUser.getFirstName(), fullUser.getLastName(), fullUser.getAlias(), fullUser.getImageUrl());
@@ -60,7 +60,7 @@ public class UserService extends BaseService {
     }
 
     public Response logout(AuthenticatedRequest request) {
-        Boolean deleteSucceeded = daoFactory.getUserDao().deleteAuthToken(request.getAuthToken());
+        Boolean deleteSucceeded = daoFactory.getAuthDao().deleteAuthToken(request.getAuthToken());
         return new Response(deleteSucceeded);
     }
 
@@ -80,7 +80,7 @@ public class UserService extends BaseService {
         }
         FullUser fullUser = new FullUser(password, user.getFirstName(), user.getLastName(), user.getAlias(), imageUrl, initialFollowerCount, initialFollowingCount);
         daoFactory.getUserDao().insertUser(fullUser);
-        daoFactory.getUserDao().insertAuthToken(authToken);
+        daoFactory.getAuthDao().insertAuthToken(authToken);
         return new AuthenticateResponse(user, authToken);
     }
 }

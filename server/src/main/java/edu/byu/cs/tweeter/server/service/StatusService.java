@@ -19,21 +19,21 @@ public class StatusService extends BaseService {
     }
 
     public StatusPagedResponse getFeed(PagedRequest<Status> request) {
-        PagedRequestValidator<Status> pagedRequestValidator = new PagedRequestValidator<>(request, daoFactory.getUserDao());
+        PagedRequestValidator<Status> pagedRequestValidator = new PagedRequestValidator<>(request, daoFactory.getAuthDao());
         pagedRequestValidator.validate();
         List<Status> feedPage = daoFactory.getFeedDao().getPage(request);
         return new StatusPagedResponse(true, !(feedPage.size() < request.getLimit()), feedPage);
     }
 
     public PagedResponse<Status> getStory(PagedRequest<Status> request) {
-        PagedRequestValidator<Status> pagedRequestValidator = new PagedRequestValidator<>(request, daoFactory.getUserDao());
+        PagedRequestValidator<Status> pagedRequestValidator = new PagedRequestValidator<>(request, daoFactory.getAuthDao());
         pagedRequestValidator.validate();
         List<Status> storyPage = daoFactory.getStoryDao().getPage(request);
         return new StatusPagedResponse(true, !(storyPage.size() < request.getLimit()), storyPage);
     }
 
     public Response postStatus(PostStatusRequest request) {
-        PostStatusRequestValidator postStatusRequestValidator = new PostStatusRequestValidator(request, daoFactory.getUserDao());
+        PostStatusRequestValidator postStatusRequestValidator = new PostStatusRequestValidator(request, daoFactory.getAuthDao());
         postStatusRequestValidator.validate();
         daoFactory.getStoryDao().insertStatusToStory(request.getStatus());
         List<String> followers = daoFactory.getFollowDao().getFollowers(request.getStatus().getUser().getAlias(), 100, null);

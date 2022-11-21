@@ -1,13 +1,14 @@
 package edu.byu.cs.tweeter.server.service.validator;
 
 import edu.byu.cs.tweeter.model.net.request.UserRequest;
+import edu.byu.cs.tweeter.server.dao.AuthDao;
 import edu.byu.cs.tweeter.server.dao.UserDao;
 
 public class UserRequestValidator extends AuthenticatedValidator {
     private UserRequest request;
 
-    public UserRequestValidator(UserRequest request, UserDao userDao) {
-        super(request, userDao);
+    public UserRequestValidator(UserRequest request, AuthDao authDao) {
+        super(request, authDao);
         this.request = request;
     }
 

@@ -51,13 +51,13 @@ public abstract class DynamoBaseStatusDao extends BaseDynamoDao {
                 .limit(request.getLimit())
                 .collect(Collectors.toList());
 
-        List<Status> feed = new ArrayList<>();
+        List<Status> page = new ArrayList<>();
         for (DynamoStatus dynamoStatusStatus : dynamoStatusList) {
             User user = new User(dynamoStatusStatus.getFirstName(), dynamoStatusStatus.getLastName(), dynamoStatusStatus.getAlias(), dynamoStatusStatus.getImageUrl());
             Status status = new Status(dynamoStatusStatus.getPost(), user, DateUtility.getStringFromDate(dynamoStatusStatus.getDate_posted()), dynamoStatusStatus.getUrls(), dynamoStatusStatus.getMentions());
-            feed.add(status);
+            page.add(status);
         }
-        return feed;
+        return page;
     }
 
     protected abstract DynamoDbTable<DynamoStatus> getTableToQuery();
