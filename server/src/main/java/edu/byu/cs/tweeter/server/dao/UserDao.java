@@ -8,7 +8,9 @@ import edu.byu.cs.tweeter.server.dao.dto.FullUser;
 public interface UserDao {
     FullUser getUser(String alias);
     Boolean deleteAuthToken(AuthToken authToken);
-    void insertAuthToken(String alias, AuthToken authToken);
+    AuthToken getAuthToken(AuthToken authToken);
+    void insertAuthToken(AuthToken authToken);
+    void updateAuthToken(AuthToken authToken);
     void insertUser(FullUser user);
     void incrementFollowerCount(String userAlias);
     void incrementFollowingCount(String userAlias);

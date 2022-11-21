@@ -14,7 +14,10 @@ import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 import edu.byu.cs.tweeter.model.net.response.Response;
 import edu.byu.cs.tweeter.server.dao.DaoFactory;
 import edu.byu.cs.tweeter.server.dao.dto.FullUser;
-import edu.byu.cs.tweeter.server.service.utility.RequestValidator;
+import edu.byu.cs.tweeter.server.service.validator.FollowUnfollowRequestValidator;
+import edu.byu.cs.tweeter.server.service.validator.IsFollowerRequestValidator;
+import edu.byu.cs.tweeter.server.service.validator.PagedRequestValidator;
+import edu.byu.cs.tweeter.server.service.validator.UserRequestValidator;
 
 /**
  * Contains the business logic for getting the users a user is following.
@@ -26,7 +29,8 @@ public class FollowService extends BaseService {
     }
 
     public Response follow(FollowUnfollowRequest request) {
-        RequestValidator.validateFollowUnfollowRequest(request);
+        FollowUnfollowRequestValidator followUnfollowRequestValidator = new FollowUnfollowRequestValidator(request, daoFactory.getUserDao());
+        followUnfollowRequestValidator.validate();
         Boolean insertSucceeded = daoFactory.getFollowDao().insertFollower(request.getUserToFollowUnfollowAlias(), request.getUserAlias());
         daoFactory.getUserDao().incrementFollowerCount(request.getUserToFollowUnfollowAlias());
         daoFactory.getUserDao().incrementFollowingCount(request.getUserAlias());
@@ -34,7 +38,8 @@ public class FollowService extends BaseService {
     }
 
     public Response unfollow(FollowUnfollowRequest request) {
-        RequestValidator.validateFollowUnfollowRequest(request);
+        FollowUnfollowRequestValidator followUnfollowRequestValidator = new FollowUnfollowRequestValidator(request, daoFactory.getUserDao());
+        followUnfollowRequestValidator.validate();
         Boolean deleteSucceeded = daoFactory.getFollowDao().deleteFollower(request.getUserToFollowUnfollowAlias(), request.getUserAlias());
         daoFactory.getUserDao().decrementFollowerCount(request.getUserToFollowUnfollowAlias());
         daoFactory.getUserDao().decrementFollowingCount(request.getUserAlias());
@@ -42,7 +47,8 @@ public class FollowService extends BaseService {
     }
 
     public PagedResponse<User> getFollowers(PagedRequest<String> request) {
-        RequestValidator.validatePagedRequest(request);
+        PagedRequestValidator<String> pagedRequestValidator = new PagedRequestValidator<String>(request, daoFactory.getUserDao());
+        pagedRequestValidator.validate();
         List<String> aliases = daoFactory.getFollowDao().getFollowers(request.getAlias(), request.getLimit(), request.getLastItem());
         for (String alias : aliases) {
             System.out.println(alias);
@@ -53,7 +59,8 @@ public class FollowService extends BaseService {
     }
 
     public PagedResponse<User> getFollowing(PagedRequest<String> request) {
-        RequestValidator.validatePagedRequest(request);
+        PagedRequestValidator<String> pagedRequestValidator = new PagedRequestValidator<String>(request, daoFactory.getUserDao());
+        pagedRequestValidator.validate();
         List<String> aliases = daoFactory.getFollowDao().getFollowing(request);
         List<FullUser> fullUsers = daoFactory.getUserDao().batchGetUser(aliases);
         List<User> users = fullUsers.stream().map(fullUser -> new User(fullUser.getFirstName(), fullUser.getLastName(), fullUser.getAlias(), fullUser.getImageUrl())).collect(Collectors.toList());
@@ -61,21 +68,24 @@ public class FollowService extends BaseService {
     }
 
     public CountResponse getFollowerCount(UserRequest request) {
-        RequestValidator.validateUserRequest(request);
+        UserRequestValidator userRequestValidator = new UserRequestValidator(request, daoFactory.getUserDao());
+        userRequestValidator.validate();
         FullUser user = daoFactory.getUserDao().getUser(request.getAlias());
         int count = user.getFollowerCount();
         return new CountResponse(count);
     }
 
     public CountResponse getFollowingCount(UserRequest request) {
-        RequestValidator.validateUserRequest(request);
+        UserRequestValidator userRequestValidator = new UserRequestValidator(request, daoFactory.getUserDao());
+        userRequestValidator.validate();
         FullUser user = daoFactory.getUserDao().getUser(request.getAlias());
         int count = user.getFollowingCount();
         return new CountResponse(count);
     }
 
     public IsFollowerResponse getIsFollower(IsFollowerRequest request) {
-        RequestValidator.validateIsFollowerRequest(request);
+        IsFollowerRequestValidator isFollowerRequestValidator = new IsFollowerRequestValidator(request, daoFactory.getUserDao());
+        isFollowerRequestValidator.validate();
         Boolean doesFollow = daoFactory.getFollowDao().checkFollows(request);
         return new IsFollowerResponse(doesFollow);
     }

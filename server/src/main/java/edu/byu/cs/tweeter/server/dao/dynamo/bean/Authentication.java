@@ -7,7 +7,6 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 
 @DynamoDbBean
 public class Authentication {
-    private String alias;
     private Long expiration;
     private String token;
 
@@ -23,18 +22,9 @@ public class Authentication {
 
     public Authentication() {}
 
-    public Authentication(String alias, AuthToken authToken) {
-        this.alias = alias;
+    public Authentication(AuthToken authToken) {
         this.expiration = authToken.getExpiration();
         this.token = authToken.getToken();
-    }
-
-    public String getAlias() {
-        return alias;
-    }
-
-    public void setAlias(String alias) {
-        this.alias = alias;
     }
 
     public void setExpiration(Long expiration) {

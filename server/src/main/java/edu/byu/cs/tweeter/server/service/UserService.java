@@ -1,8 +1,5 @@
 package edu.byu.cs.tweeter.server.service;
 
-import java.util.Date;
-import java.util.UUID;
-
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.AuthenticatedRequest;
@@ -14,8 +11,12 @@ import edu.byu.cs.tweeter.model.net.response.Response;
 import edu.byu.cs.tweeter.model.net.response.UserResponse;
 import edu.byu.cs.tweeter.server.dao.DaoFactory;
 import edu.byu.cs.tweeter.server.dao.dto.FullUser;
+import edu.byu.cs.tweeter.server.service.utility.Authenticator;
 import edu.byu.cs.tweeter.server.service.utility.HashUtility;
-import edu.byu.cs.tweeter.server.service.utility.RequestValidator;
+import edu.byu.cs.tweeter.server.service.validator.AuthenticatedValidator;
+import edu.byu.cs.tweeter.server.service.validator.LoginValidator;
+import edu.byu.cs.tweeter.server.service.validator.RegisterRequestValidator;
+import edu.byu.cs.tweeter.server.service.validator.UserRequestValidator;
 
 public class UserService extends BaseService {
 
@@ -26,7 +27,8 @@ public class UserService extends BaseService {
     }
 
     public AuthenticateResponse login(LoginRequest request) {
-        RequestValidator.validateLoginRequest(request);
+        LoginValidator loginValidator = new LoginValidator(request);
+        loginValidator.validate();
 
         FullUser userWithPassword = daoFactory.getUserDao().getUser(request.getUsername());
 
@@ -43,31 +45,34 @@ public class UserService extends BaseService {
             throw new RuntimeException("[Bad Request] Invalid password specified", ex);
         }
 
-        AuthToken authToken = new AuthToken(UUID.randomUUID().toString(), new Date().getTime());
+        AuthToken authToken = Authenticator.generateAuthToken();
 
-        daoFactory.getUserDao().insertAuthToken(userWithPassword.getAlias(), authToken);
+        daoFactory.getUserDao().insertAuthToken(authToken);
         User user = new User(userWithPassword.getFirstName(), userWithPassword.getLastName(), userWithPassword.getAlias(), userWithPassword.getImageUrl());
         return new AuthenticateResponse(user, authToken);
     }
 
     public UserResponse getUser(UserRequest request) {
-        RequestValidator.validateUserRequest(request);
+        UserRequestValidator userRequestValidator = new UserRequestValidator(request, daoFactory.getUserDao());
+        userRequestValidator.validate();
         FullUser fullUser = daoFactory.getUserDao().getUser(request.getAlias());
         User user = new User(fullUser.getFirstName(), fullUser.getLastName(), fullUser.getAlias(), fullUser.getImageUrl());
         return new UserResponse(user);
     }
 
     public Response logout(AuthenticatedRequest request) {
-        RequestValidator.validateAuthenticatedRequest(request);
+        AuthenticatedValidator authenticatedValidator = new AuthenticatedValidator(request, daoFactory.getUserDao());
+        authenticatedValidator.validate();
         Boolean deleteSucceeded = daoFactory.getUserDao().deleteAuthToken(request.getAuthToken());
         return new Response(deleteSucceeded);
     }
 
     public AuthenticateResponse register(RegisterRequest request) {
-        RequestValidator.validateRegisterRequest(request);
+        RegisterRequestValidator registerRequestValidator = new RegisterRequestValidator(request);
+        registerRequestValidator.validate();
         String imageUrl = daoFactory.getImageDao().storeImage(request.getImage());
         User user = new User(request.getFirstname(), request.getLastname(), request.getAlias(), imageUrl);
-        AuthToken authToken = new AuthToken(UUID.randomUUID().toString(), new Date().getTime());
+        AuthToken authToken = Authenticator.generateAuthToken();
 
         String password;
         try {
@@ -78,7 +83,7 @@ public class UserService extends BaseService {
         }
         FullUser fullUser = new FullUser(password, user.getFirstName(), user.getLastName(), user.getAlias(), imageUrl, initialFollowerCount, initialFollowingCount);
         daoFactory.getUserDao().insertUser(fullUser);
-        daoFactory.getUserDao().insertAuthToken(user.getAlias(), authToken);
+        daoFactory.getUserDao().insertAuthToken(authToken);
         return new AuthenticateResponse(user, authToken);
     }
 }

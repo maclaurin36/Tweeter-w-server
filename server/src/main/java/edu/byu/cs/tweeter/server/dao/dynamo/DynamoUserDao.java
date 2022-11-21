@@ -15,6 +15,8 @@ import software.amazon.awssdk.enhanced.dynamodb.MappedTableResource;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.enhanced.dynamodb.model.BatchGetItemEnhancedRequest;
 import software.amazon.awssdk.enhanced.dynamodb.model.BatchGetResultPageIterable;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
 import software.amazon.awssdk.enhanced.dynamodb.model.ReadBatch;
 import software.amazon.awssdk.enhanced.dynamodb.model.UpdateItemEnhancedRequest;
 
@@ -42,18 +44,50 @@ public class DynamoUserDao extends BaseDynamoDao implements UserDao {
 
     @Override
     public Boolean deleteAuthToken(AuthToken authToken) {
+        AuthToken newestToken = getAuthToken(authToken);
         Key key = Key.builder()
-                .partitionValue(authToken.getToken())
-                .sortValue(authToken.getExpiration())
+                .partitionValue(newestToken.getToken())
+                .sortValue(newestToken.getExpiration())
                 .build();
         authTable.deleteItem(key);
         return true;
     }
 
     @Override
-    public void insertAuthToken(String alias, AuthToken authToken) {
-        Authentication authentication = new Authentication(alias, authToken);
+    public AuthToken getAuthToken(AuthToken authToken) {
+        Key key = Key.builder()
+                .partitionValue(authToken.getToken())
+                .build();
+
+        QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
+                .queryConditional(QueryConditional.keyEqualTo(key))
+                .scanIndexForward(true);
+
+        QueryEnhancedRequest request = requestBuilder.build();
+
+        List<Authentication> authenticationList = authTable.query(request)
+                .items()
+                .stream()
+                .limit(1)
+                .collect(Collectors.toList());
+
+        if (authenticationList.size() == 0) {
+            return null;
+        }
+
+        return new AuthToken(authenticationList.get(0).getToken(), authenticationList.get(0).getExpiration());
+    }
+
+    @Override
+    public void insertAuthToken(AuthToken authToken) {
+        Authentication authentication = new Authentication(authToken);
         authTable.putItem(authentication);
+    }
+
+    @Override
+    public void updateAuthToken(AuthToken authToken) {
+        Authentication authentication = new Authentication(authToken);
+        authTable.updateItem(authentication);
     }
 
     @Override
