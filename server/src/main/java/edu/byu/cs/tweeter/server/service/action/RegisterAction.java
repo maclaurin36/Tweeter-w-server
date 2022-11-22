@@ -2,7 +2,6 @@ package edu.byu.cs.tweeter.server.service.action;
 
 import edu.byu.cs.tweeter.model.domain.AuthToken;
 import edu.byu.cs.tweeter.model.domain.User;
-import edu.byu.cs.tweeter.model.net.request.LoginRequest;
 import edu.byu.cs.tweeter.model.net.request.RegisterRequest;
 import edu.byu.cs.tweeter.model.net.response.AuthenticateResponse;
 import edu.byu.cs.tweeter.server.dao.AuthDao;
@@ -11,7 +10,6 @@ import edu.byu.cs.tweeter.server.dao.UserDao;
 import edu.byu.cs.tweeter.server.dao.dto.FullUser;
 import edu.byu.cs.tweeter.server.service.utility.AuthTokenGenerator;
 import edu.byu.cs.tweeter.server.service.utility.HashUtility;
-import edu.byu.cs.tweeter.server.service.validator.RegisterRequestValidator;
 
 public class RegisterAction extends AuthenticateAction {
     private RegisterRequest request;
@@ -42,8 +40,6 @@ public class RegisterAction extends AuthenticateAction {
     }
 
     public AuthenticateResponse authenticate() {
-        RegisterRequestValidator registerRequestValidator = new RegisterRequestValidator(request);
-        registerRequestValidator.validate();
         String imageUrl = imageDao.storeImage(request.getImage());
         User user = new User(request.getFirstname(), request.getLastname(), request.getAlias(), imageUrl);
         AuthToken authToken = AuthTokenGenerator.generateAuthToken();

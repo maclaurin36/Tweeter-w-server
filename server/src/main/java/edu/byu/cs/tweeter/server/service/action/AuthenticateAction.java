@@ -1,15 +1,8 @@
 package edu.byu.cs.tweeter.server.service.action;
 
-import edu.byu.cs.tweeter.model.domain.AuthToken;
-import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.LoginRequest;
-import edu.byu.cs.tweeter.model.net.response.AuthenticateResponse;
 import edu.byu.cs.tweeter.server.dao.AuthDao;
 import edu.byu.cs.tweeter.server.dao.UserDao;
-import edu.byu.cs.tweeter.server.dao.dto.FullUser;
-import edu.byu.cs.tweeter.server.service.utility.AuthTokenGenerator;
-import edu.byu.cs.tweeter.server.service.utility.HashUtility;
-import edu.byu.cs.tweeter.server.service.validator.RegisterRequestValidator;
 
 public abstract class AuthenticateAction {
     protected UserDao userDao;
