@@ -11,14 +11,12 @@ import edu.byu.cs.tweeter.server.service.action.authenticated.AuthenticatedActio
 public abstract class BaseFollowAction extends AuthenticatedAction {
     protected FollowDao followDao;
     private UserDao userDao;
-    private AuthDao authDao;
     private FollowUnfollowRequest request;
 
     public BaseFollowAction(FollowDao followDao, UserDao userDao, AuthDao authDao, FollowUnfollowRequest request) {
         super(authDao, request);
         this.followDao = followDao;
         this.userDao = userDao;
-        this.authDao = authDao;
         this.request = request;
 
         validate();
@@ -26,7 +24,6 @@ public abstract class BaseFollowAction extends AuthenticatedAction {
 
     public Response run() {
         performFollowUnfollow(request.getUserToFollowUnfollowAlias(), request.getUserAlias());
-        Boolean insertSucceeded = followDao.insertFollower(request.getUserToFollowUnfollowAlias(), request.getUserAlias());
 
         FullUser userToFollowUnfollow = userDao.getUser(request.getUserToFollowUnfollowAlias());
         userToFollowUnfollow.setFollowerCount(getNewFollowerCount(userToFollowUnfollow.getFollowerCount()));
@@ -34,7 +31,7 @@ public abstract class BaseFollowAction extends AuthenticatedAction {
         FullUser requestUser = userDao.getUser(request.getUserAlias());
         requestUser.setFollowingCount(getNewFollowingCount(requestUser.getFollowingCount()));
         userDao.updateUser(requestUser);
-        return new Response(insertSucceeded);
+        return new Response(true);
     }
 
     private void validate() {

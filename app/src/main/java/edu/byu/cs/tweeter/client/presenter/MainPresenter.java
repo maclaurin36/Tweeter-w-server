@@ -82,7 +82,7 @@ public class MainPresenter extends BasePresenter<MainActivityView> implements Fo
     }
 
     public Status createStatusFromPost(String post) throws ParseException {
-        return new Status(post, selectedUser, getFormattedDateTime(), parseURLs(post), parseMentions(post));
+        return new Status(post, Cache.getInstance().getCurrUser(), getFormattedDateTime(), parseURLs(post), parseMentions(post));
     }
 
     public void logout() {

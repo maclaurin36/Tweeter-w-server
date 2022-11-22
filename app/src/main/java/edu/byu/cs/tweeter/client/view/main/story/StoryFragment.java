@@ -301,6 +301,9 @@ public class StoryFragment extends Fragment implements PagedView<Status> {
          * the loading footer at the bottom of the list.
          */
         private void removeLoadingFooter() {
+            if (story.size() == 0) {
+                return;
+            }
             removeItem(story.get(story.size() - 1));
         }
 
