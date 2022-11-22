@@ -1,22 +1,15 @@
 package edu.byu.cs.tweeter.model.net.request;
 
-public class RegisterRequest {
-    private String alias;
+public class RegisterRequest extends LoginRequest {
     private String firstname;
     private String lastname;
     private String image;
-    private String password;
 
     public RegisterRequest(String alias, String firstname, String lastname, String image, String password) {
-        this.alias = alias;
+        super(alias, password);
         this.firstname = firstname;
         this.lastname = lastname;
         this.image = image;
-        this.password = password;
-    }
-
-    public String getAlias() {
-        return alias;
     }
 
     public String getFirstname() {
@@ -31,14 +24,6 @@ public class RegisterRequest {
         return image;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
-
     public void setFirstname(String firstname) {
         this.firstname = firstname;
     }
@@ -51,9 +36,5 @@ public class RegisterRequest {
         this.image = image;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    private RegisterRequest() {}
+    private RegisterRequest() { super(null, null); }
 }

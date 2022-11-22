@@ -5,8 +5,8 @@ package edu.byu.cs.tweeter.model.net.request;
  */
 public class LoginRequest {
 
-    private String username;
-    private String password;
+    protected String alias;
+    protected String password;
 
     /**
      * Allows construction of the object from Json. Private so it won't be called in normal code.
@@ -16,11 +16,11 @@ public class LoginRequest {
     /**
      * Creates an instance.
      *
-     * @param username the username of the user to be logged in.
+     * @param alias the username of the user to be logged in.
      * @param password the password of the user to be logged in.
      */
-    public LoginRequest(String username, String password) {
-        this.username = username;
+    public LoginRequest(String alias, String password) {
+        this.alias = alias;
         this.password = password;
     }
 
@@ -29,17 +29,17 @@ public class LoginRequest {
      *
      * @return the username.
      */
-    public String getUsername() {
-        return username;
+    public String getAlias() {
+        return alias;
     }
 
     /**
      * Sets the username.
      *
-     * @param username the username.
+     * @param alias the username.
      */
-    public void setUsername(String username) {
-        this.username = username;
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
     /**
      * Returns the password of the user to be logged in by this request.

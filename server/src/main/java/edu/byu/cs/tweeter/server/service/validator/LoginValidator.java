@@ -11,7 +11,7 @@ public class LoginValidator implements ValidatorTemplate {
 
     @Override
     public void validate() {
-        if (loginRequest.getUsername() == null) {
+        if (loginRequest.getAlias() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have a username");
         } else if (loginRequest.getPassword() == null) {
             throw new RuntimeException("[Bad Request] Request needs to have a password");

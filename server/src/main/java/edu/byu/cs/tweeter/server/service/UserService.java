@@ -28,7 +28,7 @@ public class UserService extends BaseService {
         LoginValidator loginValidator = new LoginValidator(request);
         loginValidator.validate();
 
-        FullUser userWithPassword = daoFactory.getUserDao().getUser(request.getUsername());
+        FullUser userWithPassword = daoFactory.getUserDao().getUser(request.getAlias());
 
         if (userWithPassword == null) {
             return new AuthenticateResponse("Invalid alias");
