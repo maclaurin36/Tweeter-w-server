@@ -11,9 +11,9 @@ import edu.byu.cs.tweeter.server.dao.DaoFactory;
 import edu.byu.cs.tweeter.server.dao.AwsDaoFactory;
 import edu.byu.cs.tweeter.server.service.StatusService;
 
-public class GetFeedHandler implements RequestHandler<PagedRequest<Status>, StatusPagedResponse> {
+public class GetFeedHandler implements RequestHandler<PagedRequest<Status>, PagedResponse<Status>> {
     @Override
-    public StatusPagedResponse handleRequest(PagedRequest<Status> request, Context context) {
+    public PagedResponse<Status> handleRequest(PagedRequest<Status> request, Context context) {
         DaoFactory daoFactory = new AwsDaoFactory();
         return new StatusService(daoFactory).getFeed(request);
     }

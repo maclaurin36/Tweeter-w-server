@@ -7,9 +7,8 @@ import edu.byu.cs.tweeter.model.net.request.PagedRequest;
 import edu.byu.cs.tweeter.model.net.request.PostStatusRequest;
 import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 import edu.byu.cs.tweeter.model.net.response.Response;
-import edu.byu.cs.tweeter.model.net.response.StatusPagedResponse;
 import edu.byu.cs.tweeter.server.dao.DaoFactory;
-import edu.byu.cs.tweeter.server.service.validator.PagedRequestValidator;
+import edu.byu.cs.tweeter.server.service.action.paged.StatusPagedAction;
 import edu.byu.cs.tweeter.server.service.validator.PostStatusRequestValidator;
 
 public class StatusService extends BaseService {
@@ -18,18 +17,12 @@ public class StatusService extends BaseService {
         super(daoFactory);
     }
 
-    public StatusPagedResponse getFeed(PagedRequest<Status> request) {
-        PagedRequestValidator<Status> pagedRequestValidator = new PagedRequestValidator<>(request, daoFactory.getAuthDao());
-        pagedRequestValidator.validate();
-        List<Status> feedPage = daoFactory.getFeedDao().getPage(request);
-        return new StatusPagedResponse(true, !(feedPage.size() < request.getLimit()), feedPage);
+    public PagedResponse<Status> getFeed(PagedRequest<Status> request) {
+        return new StatusPagedAction(daoFactory.getAuthDao(), daoFactory.getFeedDao()).getList(request);
     }
 
     public PagedResponse<Status> getStory(PagedRequest<Status> request) {
-        PagedRequestValidator<Status> pagedRequestValidator = new PagedRequestValidator<>(request, daoFactory.getAuthDao());
-        pagedRequestValidator.validate();
-        List<Status> storyPage = daoFactory.getStoryDao().getPage(request);
-        return new StatusPagedResponse(true, !(storyPage.size() < request.getLimit()), storyPage);
+        return new StatusPagedAction(daoFactory.getAuthDao(), daoFactory.getStoryDao()).getList(request);
     }
 
     public Response postStatus(PostStatusRequest request) {

@@ -130,7 +130,7 @@ public class DynamoFollowDao extends BaseDynamoDao implements FollowDao {
     }
 
     @Override
-    public Boolean checkFollows(IsFollowerRequest userRequest) {
+    public Boolean getFollows(IsFollowerRequest userRequest) {
         Key key = Key.builder().partitionValue(userRequest.getFollowerAlias()).sortValue(userRequest.getFolloweeAlias()).build();
         Follows follows = followTable.getItem(key);
         return follows != null;

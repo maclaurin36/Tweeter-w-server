@@ -22,10 +22,6 @@ public abstract class DynamoBaseStatusDao extends BaseDynamoDao {
     private static final String PARTITION_KEY = "user_handle";
     private static final String SORT_KEY = "date_posted";
 
-    private static final String STORY_TABLE_NAME = "story";
-
-    private static final DynamoDbTable<DynamoStatus> storyTable = enhancedClient.table(STORY_TABLE_NAME, TableSchema.fromBean(DynamoStatus.class));
-
     public List<Status> getPage(PagedRequest<Status> request) {
         Key key = Key.builder()
                 .partitionValue(request.getAlias())

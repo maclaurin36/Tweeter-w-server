@@ -5,6 +5,6 @@ import java.util.List;
 import edu.byu.cs.tweeter.model.domain.Status;
 import edu.byu.cs.tweeter.model.net.request.PagedRequest;
 
-public interface StoryDao extends PagedDao<Status, Status> {
-    void insertStatusToStory(Status status);
+public interface PagedDao<T, U> {
+    List<U> getPage(PagedRequest<T> request);
 }

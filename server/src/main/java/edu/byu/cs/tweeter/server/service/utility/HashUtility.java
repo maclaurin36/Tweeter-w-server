@@ -6,26 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 
-// This is very high security
 public class HashUtility {
-//    public static void main(String[] args) throws NoSuchAlgorithmException, InvalidKeySpecException
-//    {
-//        // Given at register
-//        String  registerPassword = "password";
-//        // Store this in database
-//        String generatedSecuredPasswordHash = generateStrongPasswordHash(registerPassword);
-//        System.out.println("Generated Password: " + generatedSecuredPasswordHash);
-//
-//        // Given at login
-//        String loginPassword = "password";
-//        boolean matched = validatePassword(loginPassword, generatedSecuredPasswordHash);
-//        System.out.println("Passwords Match: " + matched);
-//
-//        // Given at login
-//        String incorrectLoginPassword = "basPassword";
-//        matched = validatePassword(incorrectLoginPassword, generatedSecuredPasswordHash);
-//        System.out.println("Passwords Match: " + matched);
-//    }
 
     public static boolean validatePassword(String originalPassword, String storedPassword) throws NoSuchAlgorithmException, InvalidKeySpecException
     {
