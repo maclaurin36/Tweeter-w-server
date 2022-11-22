@@ -176,7 +176,7 @@ public class MainPresenter extends BasePresenter<MainActivityView> implements Fo
 
     public String getFormattedDateTime() throws ParseException {
         SimpleDateFormat userFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        SimpleDateFormat statusFormat = new SimpleDateFormat("MMM d yyyy h:mm aaa");
+        SimpleDateFormat statusFormat = new SimpleDateFormat("MMM d yyyy h:mm:ss aaa");
 
         return statusFormat.format(userFormat.parse(LocalDate.now().toString() + " " + LocalTime.now().toString().substring(0, 8)));
     }

@@ -29,7 +29,7 @@ public abstract class DynamoBaseStatusDao extends BaseDynamoDao {
 
         QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
                 .queryConditional(QueryConditional.keyEqualTo(key))
-                .scanIndexForward(true);
+                .scanIndexForward(false);
 
         if (request.getLastItem() != null) {
             Map<String, AttributeValue> startKey = new HashMap<>();

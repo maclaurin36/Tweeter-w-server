@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import javax.management.Query;
+
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.FollowUnfollowRequest;
 import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
@@ -65,24 +67,7 @@ public class DynamoFollowDao extends BaseDynamoDao implements FollowDao {
     @Override
     public List<String> getFollowers(String alias, int limit, String lastItem) {
         DynamoDbIndex<Follows> index = followTable.index(INDEX_NAME);
-        Key key = Key.builder()
-                .partitionValue(alias)
-                .build();
-
-        QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
-                .queryConditional(QueryConditional.keyEqualTo(key))
-                .limit(limit)
-                .scanIndexForward(false);
-
-        if(lastItem != null && !lastItem.equals("")) {
-            Map<String, AttributeValue> startKey = new HashMap<>();
-            startKey.put(INDEX_PARTITION_KEY, AttributeValue.builder().s(alias).build());
-            startKey.put(INDEX_SORT_KEY, AttributeValue.builder().s(lastItem).build());
-
-            requestBuilder.exclusiveStartKey(startKey);
-        }
-
-        QueryEnhancedRequest query = requestBuilder.build();
+        QueryEnhancedRequest query = getFollowQuery(INDEX_PARTITION_KEY, INDEX_SORT_KEY, lastItem, alias, limit);
 
         List<Follows> followerList = new ArrayList<>();
 
@@ -92,29 +77,12 @@ public class DynamoFollowDao extends BaseDynamoDao implements FollowDao {
                 .limit(1)
                 .forEach(followerPage -> followerList.addAll(followerPage.items()));
 
-        List<String> aliases = followerList.stream().map(Follows::getFollower_handle).collect(Collectors.toList());
-        return aliases;
+        return followerList.stream().map(Follows::getFollower_handle).collect(Collectors.toList());
     }
 
     @Override
     public List<String> getFollowing(PagedRequest<String> request) {
-        Key key = Key.builder()
-                .partitionValue(request.getAlias())
-                .build();
-
-        QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
-                .queryConditional(QueryConditional.keyEqualTo(key))
-                .scanIndexForward(true);
-
-        if (request.getLastItem() != null && !request.getLastItem().equals("")) {
-            Map<String, AttributeValue> startKey = new HashMap<>();
-            startKey.put(PARTITION_KEY, AttributeValue.builder().s(request.getAlias()).build());
-            startKey.put(SORT_KEY, AttributeValue.builder().s(request.getLastItem()).build());
-
-            requestBuilder.exclusiveStartKey(startKey);
-        }
-
-        QueryEnhancedRequest query = requestBuilder.build();
+        QueryEnhancedRequest query = getFollowQuery(PARTITION_KEY, SORT_KEY, request.getLastItem(), request.getAlias(), request.getLimit());
 
         List<Follows> follows = followTable.query(query)
                 .items()
@@ -122,11 +90,27 @@ public class DynamoFollowDao extends BaseDynamoDao implements FollowDao {
                 .limit(request.getLimit())
                 .collect(Collectors.toList());
 
-        List<String> following = new ArrayList<>();
-        for (Follows follow : follows) {
-            following.add(follow.getFollowee_handle());
+        return follows.stream().map(Follows::getFollowee_handle).collect(Collectors.toList());
+    }
+
+    private QueryEnhancedRequest getFollowQuery(String partitionKey, String sortKey, String lastItem, String alias, int limit) {
+        Key key = Key.builder()
+                .partitionValue(alias)
+                .build();
+
+        QueryEnhancedRequest.Builder requestBuilder = QueryEnhancedRequest.builder()
+                .queryConditional(QueryConditional.keyEqualTo(key))
+                .limit(limit);
+
+        if (lastItem != null && !lastItem.equals("")) {
+            Map<String, AttributeValue> startKey = new HashMap<>();
+            startKey.put(partitionKey, AttributeValue.builder().s(alias).build());
+            startKey.put(sortKey, AttributeValue.builder().s(lastItem).build());
+
+            requestBuilder.exclusiveStartKey(startKey);
         }
-        return following;
+
+        return requestBuilder.build();
     }
 
     @Override

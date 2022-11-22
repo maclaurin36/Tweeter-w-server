@@ -6,12 +6,12 @@ import java.time.format.DateTimeFormatter;
 
 public class DateUtility {
     public static Long getDateFromString(String date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d yyyy h:mm a");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d yyyy h:mm:ss a");
         return LocalDateTime.parse(date, formatter).toEpochSecond(ZoneOffset.UTC);
     }
 
     public static String getStringFromDate(Long date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d yyyy h:mm a");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d yyyy h:mm:ss a");
         return LocalDateTime.ofEpochSecond(date, 0, ZoneOffset.UTC).format(formatter);
     }
 

@@ -1,5 +1,7 @@
 package edu.byu.cs.tweeter.server.service.action.authenticated.paged;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +25,11 @@ public abstract class UserPagedAction extends PagedAction<String, User> {
     @Override
     protected final List<User> getPage() {
         List<String> aliases = getUserAliases(request);
+        if (aliases.size() == 0) {
+            return new ArrayList<>();
+        }
         List<FullUser> fullUsers = userDao.batchGetUser(aliases);
+        fullUsers.sort(Comparator.comparingInt(o -> aliases.indexOf(o.getAlias())));
         List<User> users = fullUsers.stream().map(fullUser -> new User(fullUser.getFirstName(), fullUser.getLastName(), fullUser.getAlias(), fullUser.getImageUrl())).collect(Collectors.toList());
         return users;
     }
