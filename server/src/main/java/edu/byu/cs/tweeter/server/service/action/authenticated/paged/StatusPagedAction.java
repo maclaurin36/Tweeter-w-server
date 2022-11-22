@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.server.service.action.paged;
+package edu.byu.cs.tweeter.server.service.action.authenticated.paged;
 
 import java.util.List;
 
@@ -10,13 +10,13 @@ import edu.byu.cs.tweeter.server.dao.PagedDao;
 public class StatusPagedAction extends PagedAction<Status, Status> {
     private PagedDao<Status, Status> pagedDao;
 
-    public StatusPagedAction(AuthDao authDao, PagedDao<Status, Status> pagedDao) {
-        super(authDao);
+    public StatusPagedAction(AuthDao authDao, PagedDao<Status, Status> pagedDao, PagedRequest<Status> request) {
+        super(authDao, request);
         this.pagedDao = pagedDao;
     }
 
     @Override
-    protected List<Status> getPage(PagedRequest<Status> request) {
+    protected List<Status> getPage() {
         return pagedDao.getPage(request);
     }
 }

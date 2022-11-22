@@ -15,7 +15,6 @@ import edu.byu.cs.tweeter.server.service.utility.AuthTokenGenerator;
 import edu.byu.cs.tweeter.server.service.utility.HashUtility;
 import edu.byu.cs.tweeter.server.service.validator.LoginValidator;
 import edu.byu.cs.tweeter.server.service.validator.RegisterRequestValidator;
-import edu.byu.cs.tweeter.server.service.validator.UserRequestValidator;
 
 public class UserService extends BaseService {
 
@@ -52,8 +51,6 @@ public class UserService extends BaseService {
     }
 
     public UserResponse getUser(UserRequest request) {
-        UserRequestValidator userRequestValidator = new UserRequestValidator(request, daoFactory.getAuthDao());
-        userRequestValidator.validate();
         FullUser fullUser = daoFactory.getUserDao().getUser(request.getAlias());
         User user = new User(fullUser.getFirstName(), fullUser.getLastName(), fullUser.getAlias(), fullUser.getImageUrl());
         return new UserResponse(user);

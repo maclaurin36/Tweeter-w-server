@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.server.service.action.paged;
+package edu.byu.cs.tweeter.server.service.action.authenticated.paged;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,14 +14,14 @@ public abstract class UserPagedAction extends PagedAction<String, User> {
     private UserDao userDao;
     protected FollowDao followDao;
 
-    public UserPagedAction(AuthDao authDao, UserDao userDao, FollowDao followDao) {
-        super(authDao);
+    public UserPagedAction(AuthDao authDao, UserDao userDao, FollowDao followDao, PagedRequest<String> request) {
+        super(authDao, request);
         this.userDao = userDao;
         this.followDao = followDao;
     }
 
     @Override
-    protected final List<User> getPage(PagedRequest<String> request) {
+    protected final List<User> getPage() {
         List<String> aliases = getUserAliases(request);
         List<FullUser> fullUsers = userDao.batchGetUser(aliases);
         List<User> users = fullUsers.stream().map(fullUser -> new User(fullUser.getFirstName(), fullUser.getLastName(), fullUser.getAlias(), fullUser.getImageUrl())).collect(Collectors.toList());

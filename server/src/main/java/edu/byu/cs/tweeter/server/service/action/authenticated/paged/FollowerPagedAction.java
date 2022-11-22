@@ -1,4 +1,4 @@
-package edu.byu.cs.tweeter.server.service.action.paged;
+package edu.byu.cs.tweeter.server.service.action.authenticated.paged;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import edu.byu.cs.tweeter.server.dao.UserDao;
 
 public class FollowerPagedAction extends UserPagedAction {
 
-    public FollowerPagedAction(AuthDao authDao, FollowDao followDao, UserDao userDao) {
-        super(authDao, userDao, followDao);
+    public FollowerPagedAction(AuthDao authDao, FollowDao followDao, UserDao userDao, PagedRequest<String> request) {
+        super(authDao, userDao, followDao, request);
     }
 
     @Override
