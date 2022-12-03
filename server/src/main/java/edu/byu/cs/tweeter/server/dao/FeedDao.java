@@ -7,4 +7,5 @@ import edu.byu.cs.tweeter.model.net.request.PagedRequest;
 
 public interface FeedDao extends PagedDao<Status, Status> {
     void insertStatusToFeed(String alias, Status status);
+    void insertAllStatusToFeed(List<String> aliases, Status status);
 }

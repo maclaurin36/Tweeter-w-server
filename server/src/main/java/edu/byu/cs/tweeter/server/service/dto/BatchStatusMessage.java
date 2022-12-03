@@ -2,9 +2,19 @@ package edu.byu.cs.tweeter.server.service.dto;
 
 import java.util.List;
 
+import edu.byu.cs.tweeter.model.domain.Status;
+
 public class BatchStatusMessage {
     private List<String> aliases;
-    private String feedAlias;
+    private Status status;
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 
     public BatchStatusMessage() {
 
@@ -18,16 +28,8 @@ public class BatchStatusMessage {
         this.aliases = aliases;
     }
 
-    public String getFeedAlias() {
-        return feedAlias;
-    }
-
-    public void setFeedAlias(String feedAlias) {
-        this.feedAlias = feedAlias;
-    }
-
-    public BatchStatusMessage(List<String> aliases, String feedAlias) {
+    public BatchStatusMessage(List<String> aliases, Status status) {
         this.aliases = aliases;
-        this.feedAlias = feedAlias;
+        this.status = status;
     }
 }

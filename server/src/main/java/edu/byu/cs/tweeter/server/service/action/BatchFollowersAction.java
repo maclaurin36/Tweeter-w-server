@@ -39,19 +39,19 @@ public class BatchFollowersAction {
             for (String followerAlias : followerAliases) {
                 batchAliases.add(followerAlias);
                 if (batchAliases.size() == 25) {
-                    sendBatch(batchAliases, userAlias, gson);
+                    sendBatch(batchAliases, status, gson);
                     batchAliases = new ArrayList<>();
                 }
             }
 
             if (batchAliases.size() != 0) {
-                sendBatch(batchAliases, userAlias, gson);
+                sendBatch(batchAliases, status, gson);
             }
         }
     }
 
-    private void sendBatch(List<String> batchAliases, String userAlias, Gson gson) {
-        BatchStatusMessage statusBatch = new BatchStatusMessage(batchAliases, userAlias);
+    private void sendBatch(List<String> batchAliases, Status status, Gson gson) {
+        BatchStatusMessage statusBatch = new BatchStatusMessage(batchAliases, status);
         String statusBatchString = gson.toJson(statusBatch);
         queueDao.queueBatch(statusBatchString);
     }

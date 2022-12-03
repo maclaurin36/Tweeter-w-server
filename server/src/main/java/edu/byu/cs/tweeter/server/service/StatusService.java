@@ -31,6 +31,6 @@ public class StatusService extends BaseService {
     }
 
     public void batchPostStatus(SQSEvent batchedJob) {
-        new BatchPostStatusAction().run(batchedJob);
+        new BatchPostStatusAction(daoFactory.getFeedDao()).run(batchedJob);
     }
 }
