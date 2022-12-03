@@ -13,4 +13,6 @@ public interface FollowDao {
     List<String> getFollowing(PagedRequest<String> request);
 
     Boolean getFollows(IsFollowerRequest userRequest);
+
+    List<String> getAllFollowers(String alias);
 }

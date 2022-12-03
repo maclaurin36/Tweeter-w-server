@@ -119,4 +119,23 @@ public class DynamoFollowDao extends BaseDynamoDao implements FollowDao {
         Follows follows = followTable.getItem(key);
         return follows != null;
     }
+
+    @Override
+    public List<String> getAllFollowers(String alias) {
+        String lastFollowerAlias = null;
+        boolean hasMoreFollowers = true;
+        int limit = 500;
+        List<String> allFollowers = new ArrayList<>();
+        while (hasMoreFollowers) {
+            List<String> followers = getFollowers(alias, limit, lastFollowerAlias);
+            allFollowers.addAll(followers);
+            if (followers.size() < limit) {
+                hasMoreFollowers = false;
+            }
+            if (followers.size() != 0) {
+                lastFollowerAlias = followers.get(followers.size() - 1);
+            }
+        }
+        return allFollowers;
+    }
 }

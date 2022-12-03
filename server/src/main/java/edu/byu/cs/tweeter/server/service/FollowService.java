@@ -1,5 +1,7 @@
 package edu.byu.cs.tweeter.server.service;
 
+import com.amazonaws.services.lambda.runtime.events.SQSEvent;
+
 import edu.byu.cs.tweeter.model.domain.User;
 import edu.byu.cs.tweeter.model.net.request.FollowUnfollowRequest;
 import edu.byu.cs.tweeter.model.net.request.IsFollowerRequest;
@@ -10,6 +12,7 @@ import edu.byu.cs.tweeter.model.net.response.IsFollowerResponse;
 import edu.byu.cs.tweeter.model.net.response.PagedResponse;
 import edu.byu.cs.tweeter.model.net.response.Response;
 import edu.byu.cs.tweeter.server.dao.DaoFactory;
+import edu.byu.cs.tweeter.server.service.action.BatchFollowersAction;
 import edu.byu.cs.tweeter.server.service.action.authenticated.IsFollowerAction;
 import edu.byu.cs.tweeter.server.service.action.authenticated.count.FollowerCountAction;
 import edu.byu.cs.tweeter.server.service.action.authenticated.count.FollowingCountAction;
@@ -53,5 +56,9 @@ public class FollowService extends BaseService {
 
     public IsFollowerResponse getIsFollower(IsFollowerRequest request) {
         return new IsFollowerAction(daoFactory.getFollowDao(), daoFactory.getAuthDao(), request).getIsFollower();
+    }
+
+    public void batchFollowers(SQSEvent statusEvent) {
+        new BatchFollowersAction(daoFactory.getFollowDao(), daoFactory.getQueueDao()).processBatch(statusEvent);
     }
 }

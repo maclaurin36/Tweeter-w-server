@@ -7,4 +7,5 @@ public interface DaoFactory {
     FeedDao getFeedDao();
     StoryDao getStoryDao();
     AuthDao getAuthDao();
+    QueueDao getQueueDao();
 }

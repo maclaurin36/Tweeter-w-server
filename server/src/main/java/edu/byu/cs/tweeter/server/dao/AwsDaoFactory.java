@@ -6,6 +6,7 @@ import edu.byu.cs.tweeter.server.dao.dynamo.DynamoFollowDao;
 import edu.byu.cs.tweeter.server.dao.dynamo.DynamoStoryDao;
 import edu.byu.cs.tweeter.server.dao.dynamo.DynamoUserDao;
 import edu.byu.cs.tweeter.server.dao.s3.S3ImageDao;
+import edu.byu.cs.tweeter.server.dao.sqs.SqsDao;
 
 public class AwsDaoFactory implements DaoFactory {
 
@@ -15,6 +16,7 @@ public class AwsDaoFactory implements DaoFactory {
     private final FeedDao feedDao;
     private final StoryDao storyDao;
     private final AuthDao authDao;
+    private final SqsDao sqsDao;
 
     public AwsDaoFactory() {
         userDao = new DynamoUserDao();
@@ -23,6 +25,7 @@ public class AwsDaoFactory implements DaoFactory {
         feedDao = new DynamoFeedDao();
         storyDao = new DynamoStoryDao();
         authDao = new DynamoAuthDao();
+        sqsDao = new SqsDao();
     }
 
     @Override
@@ -46,4 +49,7 @@ public class AwsDaoFactory implements DaoFactory {
 
     @Override
     public AuthDao getAuthDao() { return authDao; }
+
+    @Override
+    public SqsDao getQueueDao() { return sqsDao; }
 }
