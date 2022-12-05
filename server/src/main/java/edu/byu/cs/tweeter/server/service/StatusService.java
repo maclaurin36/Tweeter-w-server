@@ -27,7 +27,7 @@ public class StatusService extends BaseService {
     }
 
     public Response postStatus(PostStatusRequest request) {
-        return new PostStatusAction(daoFactory.getAuthDao(), daoFactory.getStoryDao(), daoFactory.getFollowDao(), daoFactory.getFeedDao(), daoFactory.getQueueDao(), request).postStatus();
+        return new PostStatusAction(daoFactory.getAuthDao(), daoFactory.getStoryDao(), daoFactory.getQueueDao(), request).postStatus();
     }
 
     public void batchPostStatus(SQSEvent batchedJob) {

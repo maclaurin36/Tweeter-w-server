@@ -14,16 +14,12 @@ import edu.byu.cs.tweeter.server.dao.StoryDao;
 
 public class PostStatusAction extends AuthenticatedAction {
     private StoryDao storyDao;
-    private FollowDao followDao;
-    private FeedDao feedDao;
     private PostStatusRequest request;
     private QueueDao queueDao;
 
-    public PostStatusAction(AuthDao authDao, StoryDao storyDao, FollowDao followDao, FeedDao feedDao, QueueDao queueDao, PostStatusRequest request) {
+    public PostStatusAction(AuthDao authDao, StoryDao storyDao, QueueDao queueDao, PostStatusRequest request) {
         super(authDao, request);
         this.storyDao = storyDao;
-        this.followDao = followDao;
-        this.feedDao = feedDao;
         this.queueDao = queueDao;
         this.request = request;
         validate();

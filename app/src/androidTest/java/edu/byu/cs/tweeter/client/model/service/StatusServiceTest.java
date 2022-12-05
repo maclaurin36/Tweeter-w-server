@@ -119,24 +119,6 @@ public class StatusServiceTest {
 
     @Test
     public void testPostStatus_endToEndTest() throws InterruptedException, IOException, TweeterRemoteException, ParseException {
-        class MainPresenterCountdown extends MainPresenter {
-
-            public MainPresenterCountdown(MainActivityView view, User user) {
-                super(view, user);
-            }
-
-            @Override
-            public void handlePostStatusSuccess() {
-                super.handlePostStatusSuccess();
-                countDownLatch.countDown();
-            }
-
-            @Override
-            public void handleFailure(String message) {
-                countDownLatch.countDown();
-            }
-        }
-
         ServerFacade serverFacade = new ServerFacade();
 
         AuthenticateResponse authenticateResponse = doLogin(serverFacade);
@@ -144,14 +126,20 @@ public class StatusServiceTest {
         User user = authenticateResponse.getUser();
 
         MainActivityView mainActivityView = Mockito.mock(MainActivityView.class);
-        MainPresenter mainPresenter = Mockito.spy(new MainPresenterCountdown(mainActivityView, user));
+        Answer<Void> answer = invocation -> {
+            countDownLatch.countDown();
+            return null;
+        };
+        String successMessage = "Successfully Posted!";
+        Mockito.doAnswer(answer).when(mainActivityView).displayInfoMessage(successMessage);
+        MainPresenter mainPresenter = Mockito.spy(new MainPresenter(mainActivityView, user));
 
         String statusMessage = generateRandomString();
         resetCountDownLatch();
         mainPresenter.postStatus(statusMessage);
         awaitCountDownLatch();
 
-        Mockito.verify(mainActivityView).displayInfoMessage("Successfully Posted!");
+        Mockito.verify(mainActivityView).displayInfoMessage(successMessage);
 
         Status status = mainPresenter.createStatusFromPost(statusMessage);
         doStoryVerification(authToken, user, serverFacade, status);
